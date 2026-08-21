@@ -1,0 +1,21 @@
+# Core pipeline
+pandas>=2.0
+numpy>=1.24
+requests>=2.31
+python-dotenv>=1.0
+pycountry>=23.12
+
+# Database (load stage)
+psycopg2-binary>=2.9
+SQLAlchemy>=2.0
+
+# Analysis notebooks
+matplotlib>=3.7
+seaborn>=0.13
+scipy>=1.11
+geopy>=2.4
+jupyterlab>=4.0
+
+# Development
+pytest>=7.4
+ruff>=0.4

@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bandcamp-aotd"
+version = "2.0.0"
+description = "Analytics pipeline for Bandcamp Daily's Album of the Day editorial archive"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Bryan Garcia" }]
+keywords = ["analytics", "etl", "music", "bandcamp", "spotify", "postgres"]
+
+dependencies = [
+    "pandas>=2.0",
+    "numpy>=1.24",
+    "requests>=2.31",
+    "python-dotenv>=1.0",
+    "pycountry>=23.12",
+]
+
+[project.optional-dependencies]
+db = ["psycopg2-binary>=2.9", "SQLAlchemy>=2.0"]
+analysis = [
+    "matplotlib>=3.7",
+    "seaborn>=0.13",
+    "scipy>=1.11",
+    "jupyterlab>=4.0",
+    "geopy>=2.4",
+]
+dev = ["pytest>=7.4", "pytest-cov>=4.1", "ruff>=0.4"]
+
+[project.scripts]
+bandcamp-aotd = "bandcamp_aotd.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+# build_notebooks.py holds notebook prose inside string literals; wrapping
+# markdown to 100 columns would mangle tables and links.
+"tools/build_notebooks.py" = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"

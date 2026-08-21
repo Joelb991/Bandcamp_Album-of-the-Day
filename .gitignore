@@ -1,0 +1,31 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+
+# Jupyter
+.ipynb_checkpoints/
+.virtual_documents/
+
+# Pipeline working files (regenerable — the warehouse is the source of truth)
+data/interim/
+data/raw/html_cache/
+
+# Tableau working files
+*.twbr
+*.hyper
+~*.twb
+
+# macOS
+.DS_Store
+Icon?
+
+# Staging area for files pending manual deletion
+_to_delete/
