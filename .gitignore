@@ -29,3 +29,6 @@ Icon?
 
 # Staging area for files pending manual deletion
 _to_delete/
+
+# Personal backup of the pre-restructure notebooks (not part of the project)
+notebooks/archive/

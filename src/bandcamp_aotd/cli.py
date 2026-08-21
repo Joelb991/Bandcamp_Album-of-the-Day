@@ -65,7 +65,21 @@ def cmd_scrape(args) -> int:
 
 
 def cmd_enrich(args) -> int:
-    from .enrich.spotify import SpotifyClient
+    """Attach Spotify metadata to a scraped or legacy CSV.
+
+    Two input shapes are supported, because the project has both:
+
+    * a fresh scrape, which already uses snake_case ``artist`` / ``album``
+    * a legacy export, which uses ``Artist`` / ``Album`` (pass ``--legacy``)
+
+    ``--legacy`` matters for more than column names. Resume works by
+    DataFrame index, so the rows have to arrive in the same order they did on
+    the run being resumed. Reading the legacy CSV through ``load_legacy_csv``
+    renames columns without reordering or dropping anything, which keeps the
+    existing checkpoint aligned.
+    """
+    from .enrich.spotify import SpotifyClient, SpotifyRunAborted
+    from .legacy import load_legacy_csv
 
     source = Path(args.input) if args.input else INTERIM_SCRAPE
     if not source.exists():
@@ -76,30 +90,65 @@ def cmd_enrich(args) -> int:
                      "Copy .env.example to .env and fill them in.")
         return 1
 
-    df = pd.read_csv(source)
+    df = load_legacy_csv(source) if args.legacy else pd.read_csv(source)
+
+    missing = {"artist", "album"} - set(df.columns)
+    if missing:
+        logger.error(
+            "%s has no %s column. If this is one of the original exports "
+            "(Artist/Album headers), re-run with --legacy.",
+            source.name, "/".join(sorted(missing)),
+        )
+        return 1
+
+    # Re-enriching an already-enriched file would concat duplicate spotify_*
+    # columns. Drop the old ones and let this run rebuild them.
+    stale = [c for c in df.columns if c.startswith("spotify_")]
+    if stale:
+        logger.info("Dropping %d existing spotify_* columns before re-enriching", len(stale))
+        df = df.drop(columns=stale)
+
+    destination = Path(args.output) if args.output else INTERIM_ENRICHED
     client = SpotifyClient()
+    client.call_budget = args.max_calls
+    if args.max_calls:
+        logger.info("Call budget for this run: %d", args.max_calls)
 
-    albums = client.enrich_dataframe(
-        df, artist_col="artist", album_col="album",
-        checkpoint_path=str(config.SPOTIFY_ALBUM_CHECKPOINT),
-    )
-    enriched = pd.concat(
-        [df.reset_index(drop=True), albums.reset_index(drop=True)], axis=1
-    )
+    try:
+        albums = client.enrich_dataframe(
+            df, artist_col="artist", album_col="album",
+            checkpoint_path=str(config.SPOTIFY_ALBUM_CHECKPOINT),
+        )
+        enriched = pd.concat(
+            [df.reset_index(drop=True), albums.reset_index(drop=True)], axis=1
+        )
 
-    artists = client.enrich_artists(
-        enriched["spotify_artist_id"],
-        checkpoint_path=str(config.SPOTIFY_ARTIST_CHECKPOINT),
-    )
-    enriched = enriched.merge(
-        artists, left_on="spotify_artist_id", right_index=True, how="left"
-    )
+        artists = client.enrich_artists(
+            enriched["spotify_artist_id"],
+            checkpoint_path=str(config.SPOTIFY_ARTIST_CHECKPOINT),
+        )
+        enriched = enriched.merge(
+            artists, left_on="spotify_artist_id", right_index=True, how="left"
+        )
+    except SpotifyRunAborted as exc:
+        logger.error("Run stopped: %s", exc)
+        logger.error("Progress is checkpointed. Re-run this exact command after "
+                     "the cooldown and it will pick up where it left off.")
+        return 1
 
     config.ensure_directories()
-    enriched.to_csv(INTERIM_ENRICHED, index=False)
-    logger.info("Wrote %d enriched rows to %s", len(enriched), INTERIM_ENRICHED)
-    logger.info("Spotify match rate: %.1f%%",
-                100 * enriched["spotify_match_status"].eq("matched").mean())
+    enriched.to_csv(destination, index=False)
+
+    matched = enriched["spotify_match_status"].eq("matched")
+    errored = enriched["spotify_match_status"].astype(str).str.startswith("error")
+    logger.info("Wrote %d enriched rows to %s", len(enriched), destination)
+    logger.info("Album match rate: %.1f%% matched, %.1f%% no match, %.1f%% errored",
+                100 * matched.mean(),
+                100 * enriched["spotify_match_status"].eq("no_match").mean(),
+                100 * errored.mean())
+    if errored.any():
+        logger.warning("%d rows still errored - re-run this command to retry just those.",
+                       int(errored.sum()))
     return 0
 
 
@@ -216,6 +265,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     enrich = subparsers.add_parser("enrich", help="attach Spotify catalog metadata")
     enrich.add_argument("--input", help="CSV to enrich (default: the last scrape)")
+    enrich.add_argument("--output", help="where to write the enriched CSV")
+    enrich.add_argument("--legacy", action="store_true",
+                        help="input uses the original Artist/Album headers")
+    enrich.add_argument("--max-calls", type=int, default=None,
+                        help="stop after N API calls, to stay under Spotify's "
+                             "Development Mode quota (try 300)")
     enrich.set_defaults(func=cmd_enrich)
 
     transform = subparsers.add_parser("transform", help="build the analytics table")
@@ -242,7 +297,11 @@ def build_parser() -> argparse.ArgumentParser:
     refresh.add_argument("--max-pages", type=int, default=None)
     refresh.add_argument("--no-cache", action="store_true")
     refresh.add_argument("--skip-enrich", action="store_true")
-    refresh.set_defaults(func=cmd_refresh, input=None, output=None)
+    # A scheduled refresh always works on freshly scraped (snake_case) data,
+    # so legacy is False here — but it must be *set*, or cmd_enrich raises
+    # AttributeError when refresh delegates to it.
+    refresh.set_defaults(func=cmd_refresh, input=None, output=None,
+                         legacy=False, max_calls=None)
 
     return parser
 

@@ -3,12 +3,16 @@ from .spotify import (
     SpotifyAPIError,
     SpotifyAuthError,
     SpotifyClient,
+    SpotifyNetworkError,
     SpotifyRateLimitError,
+    SpotifyRunAborted,
 )
 
 __all__ = [
     "SpotifyClient",
     "SpotifyAPIError",
     "SpotifyAuthError",
+    "SpotifyRunAborted",
     "SpotifyRateLimitError",
+    "SpotifyNetworkError",
 ]

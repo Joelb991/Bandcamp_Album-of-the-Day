@@ -55,6 +55,11 @@ API_BASE = "https://api.spotify.com/v1"
 MAX_RETRIES = 5
 MAX_WAIT_SECONDS = 60
 
+# (connect, read). The read budget is generous because Spotify's search
+# endpoint occasionally takes >30s under load, and a timeout there costs a
+# retry rather than a row.
+REQUEST_TIMEOUT = (10, 60)
+
 # Spotify's limit is a rolling 30-second window whose size it does not publish.
 # The original 0.1s pause (~10 requests/second) earned this project a 24-hour
 # ban partway through a 2,288-row run. ~3 requests/second is slow enough to
@@ -70,22 +75,38 @@ class SpotifyAuthError(SpotifyAPIError):
     """Raised when a Client Credentials token can't be obtained."""
 
 
-class SpotifyRateLimitError(SpotifyAPIError):
+class SpotifyRunAborted(SpotifyAPIError):
+    """Base for conditions that should stop the whole run, not just one row.
+
+    The per-row handlers below catch SpotifyAPIError and record the failure in
+    ``spotify_match_status`` so a single odd album cannot end a 2,288-row pass.
+    That is right for a row-level problem (no match, a malformed response) and
+    badly wrong for a run-level one: if Spotify has banned us for a day, or the
+    network is down, marking 1,500 untried rows "failed" destroys real
+    information and poisons the checkpoint.
+
+    Anything inheriting from this class is re-raised past the per-row handler,
+    flushes the checkpoint, and stops the run cleanly so it can be resumed.
+    """
+
+
+class SpotifyRateLimitError(SpotifyRunAborted):
     """Raised when Spotify imposes a rate limit longer than we will wait for.
 
-    This is deliberately a *separate* exception from SpotifyAPIError, and it
-    is deliberately NOT swallowed by the per-row error handling below.
+    This project actually hit it: Spotify answered a bulk run with
+    ``Retry-After: 86109`` - a 24-hour cooldown - and the original per-row
+    handler burned through 1,592 remaining rows in seconds, marking every one
+    failed without ever attempting it.
+    """
 
-    The reason is a failure this project actually hit: Spotify answered a bulk
-    run with ``Retry-After: 86109`` (a 24-hour cooldown). The per-row handler
-    caught it as an ordinary error, wrote "error: rate limited" into that row,
-    and moved on - burning through 1,592 remaining rows in seconds, each one
-    marked failed, and poisoning the checkpoint with work that was never
-    actually attempted.
 
-    A long rate limit is a run-level condition, not a row-level one. It stops
-    the whole run so the checkpoint keeps only genuine results and the next
-    run resumes from the right place.
+class SpotifyNetworkError(SpotifyRunAborted):
+    """Raised when the connection to Spotify keeps failing after retries.
+
+    A single read timeout is a blip and is retried transparently. Repeated
+    failures mean the network or the API is genuinely unavailable, which is a
+    run-level condition: better to stop with the checkpoint intact than to
+    grind through the remaining rows recording connection errors.
     """
 
 
@@ -106,6 +127,20 @@ class SpotifyClient:
             )
         self._token = _TokenCache()
         self.session = requests.Session()
+
+        # Spotify's Development Mode quota is undocumented, counted per
+        # developer account (not per app, since July 2026), and enforced with
+        # multi-hour cooldowns. Empirically this project gets ~340 calls before
+        # a ~24h ban. Setting a budget below that lets a run stop voluntarily
+        # with its checkpoint intact, instead of walking into the wall every
+        # time and risking a compounding cooldown.
+        self.call_budget: int | None = None
+        self.calls_made: int = 0
+
+    @property
+    def budget_exhausted(self) -> bool:
+        """True once this run has spent its allotted number of API calls."""
+        return self.call_budget is not None and self.calls_made >= self.call_budget
 
     # ---- authentication -------------------------------------------------
 
@@ -148,9 +183,28 @@ class SpotifyClient:
         url = path if path.startswith("http") else f"{API_BASE}{path}"
         base_headers = kwargs.pop("headers", {})
         attempt = 0
+        network_failures = 0
         while True:
             headers = {**base_headers, "Authorization": f"Bearer {self._get_token()}"}
-            response = self.session.request(method, url, headers=headers, timeout=30, **kwargs)
+            try:
+                response = self.session.request(
+                    method, url, headers=headers, timeout=REQUEST_TIMEOUT, **kwargs
+                )
+            except requests.RequestException as exc:
+                # Read timeouts, DNS hiccups, dropped connections. These are
+                # transient far more often than not, and an unhandled one used
+                # to kill a 40-minute run outright.
+                network_failures += 1
+                if network_failures > MAX_RETRIES:
+                    raise SpotifyNetworkError(
+                        f"{type(exc).__name__} on {method} {url} after "
+                        f"{MAX_RETRIES} retries: {exc}"
+                    ) from exc
+                wait = 2 ** network_failures + random.uniform(0, 0.5)
+                logger.warning("%s on %s - retrying in %.0fs (attempt %d/%d)",
+                               type(exc).__name__, url, wait, network_failures, MAX_RETRIES)
+                time.sleep(wait)
+                continue
 
             if response.status_code == 401 and attempt == 0:
                 # Token expired/invalid mid-run: force a refresh and retry once.
@@ -239,7 +293,7 @@ class SpotifyClient:
             return result
         try:
             full = self.get_artist(artist_id)
-        except SpotifyRateLimitError:
+        except SpotifyRunAborted:
             raise                       # run-level: let it stop the whole pass
         except SpotifyAPIError as exc:
             result["spotify_artist_status"] = f"error: {exc}"
@@ -286,11 +340,18 @@ class SpotifyClient:
 
         total = len(unique_ids)
         for i, artist_id in enumerate(unique_ids):
+            if self.budget_exhausted:
+                logger.warning(
+                    "Call budget reached (%d). Stopping with %d/%d artists resolved.",
+                    self.call_budget, len(results), total,
+                )
+                break
             try:
                 if artist_id not in results:
                     results[artist_id] = self.enrich_artist(artist_id)
+                    self.calls_made += 1
                     time.sleep(pause)
-            except SpotifyRateLimitError:
+            except SpotifyRunAborted:
                 # Flush what we have before unwinding, so the cooldown costs
                 # us nothing already paid for.
                 if checkpoint_path:
@@ -345,7 +406,7 @@ class SpotifyClient:
             if hit is None:
                 return result
             source = self.get_album(hit["id"]) if full_details else hit
-        except SpotifyRateLimitError:
+        except SpotifyRunAborted:
             raise                       # run-level: let it stop the whole pass
         except SpotifyAPIError as exc:
             result["spotify_match_status"] = f"error: {exc}"
@@ -408,13 +469,20 @@ class SpotifyClient:
 
         total = len(df)
         for i, (idx, row) in enumerate(df.iterrows()):
+            if self.budget_exhausted:
+                logger.warning(
+                    "Call budget reached (%d). Stopping with %d/%d rows resolved - "
+                    "re-run to continue.", self.call_budget, len(results), total,
+                )
+                break
             try:
                 if idx not in results:
                     results[idx] = self.enrich_album(
                         row[artist_col], row[album_col], full_details=full_details
                     )
+                    self.calls_made += 1
                     time.sleep(pause)
-            except SpotifyRateLimitError:
+            except SpotifyRunAborted:
                 # Flush what we have before unwinding, so the cooldown costs
                 # us nothing already paid for.
                 if checkpoint_path:
