@@ -1,120 +1,123 @@
 city,country,genre_tag,features,city_features,city_share,global_share,lift,state
-Berlin,Germany,Electronic,20,40,0.5000,0.1634,3.06,
-Detroit,United States,Electronic,5,25,0.2000,0.1634,1.22,Michigan
-New York,United States,World,11,208,0.0529,0.0577,0.92,New York
-Chicago,United States,Rock,9,95,0.0947,0.0718,1.32,Illinois
-Montréal,Canada,Experimental,6,32,0.1875,0.0875,2.14,Québec
-Los Angeles,United States,Experimental,12,166,0.0723,0.0875,0.83,California
-New York,United States,Pop,10,208,0.0481,0.0410,1.17,New York
-Washington,United States,Electronic,5,34,0.1471,0.1634,0.90,District of Columbia
-Philadelphia,United States,Experimental,3,30,0.1000,0.0875,1.14,Pennsylvania
-Los Angeles,United States,Hip-Hop/Rap,18,166,0.1084,0.0784,1.38,California
-Seattle,United States,Punk,4,20,0.2000,0.0521,3.84,Washington
-Los Angeles,United States,Jazz,6,166,0.0361,0.0759,0.48,California
-London,United Kingdom,Hip-Hop/Rap,5,145,0.0345,0.0784,0.44,
-Portland,United States,Ambient,3,30,0.1000,0.0369,2.71,Oregon
-Baltimore,United States,Alternative,3,17,0.1765,0.1583,1.11,Maryland
-Washington,United States,World,3,34,0.0882,0.0577,1.53,District of Columbia
-New York,United States,Jazz,21,208,0.1010,0.0759,1.33,New York
-Philadelphia,United States,Rock,3,30,0.1000,0.0718,1.39,Pennsylvania
-Glasgow,United Kingdom,Experimental,3,13,0.2308,0.0875,2.64,
-Chicago,United States,Electronic,13,95,0.1368,0.1634,0.84,Illinois
-New York,United States,Rock,7,208,0.0337,0.0718,0.47,New York
-Los Angeles,United States,R&B/Soul,11,166,0.0663,0.0364,1.82,California
-Melbourne,Australia,Rock,9,31,0.2903,0.0718,4.04,
-Los Angeles,United States,Pop,19,166,0.1145,0.0410,2.79,California
-Austin,United States,Electronic,3,14,0.2143,0.1634,1.31,Texas
-Los Angeles,United States,Folk,3,166,0.0181,0.0278,0.65,California
-Melbourne,Australia,Electronic,3,31,0.0968,0.1634,0.59,
-Portland,United States,Folk,3,30,0.1000,0.0278,3.59,Oregon
-New York,United States,Folk,4,208,0.0192,0.0278,0.69,New York
-New York,United States,Experimental,26,208,0.1250,0.0875,1.43,New York
-Tokyo,Japan,Experimental,4,15,0.2667,0.0875,3.05,
-Philadelphia,United States,Electronic,6,30,0.2000,0.1634,1.22,Pennsylvania
-Washington,United States,Rock,3,34,0.0882,0.0718,1.23,District of Columbia
-Chicago,United States,Experimental,8,95,0.0842,0.0875,0.96,Illinois
-Glasgow,United Kingdom,Alternative,3,13,0.2308,0.1583,1.46,
-Montréal,Canada,Alternative,7,32,0.2188,0.1583,1.38,Québec
-Nashville,United States,Alternative,5,19,0.2632,0.1583,1.66,Tennessee
-San Francisco,United States,Rock,7,30,0.2333,0.0718,3.25,California
-London,United Kingdom,Ambient,6,145,0.0414,0.0369,1.12,
-Berlin,Germany,World,6,40,0.1500,0.0577,2.60,
-Austin,United States,Folk,3,14,0.2143,0.0278,7.70,Texas
-Melbourne,Australia,Alternative,11,31,0.3548,0.1583,2.24,
-Paris,France,Jazz,7,25,0.2800,0.0759,3.69,
-San Francisco,United States,Metal,3,30,0.1000,0.0567,1.77,California
-Chicago,United States,Hip-Hop/Rap,9,95,0.0947,0.0784,1.21,Illinois
-Washington,United States,Punk,6,34,0.1765,0.0521,3.39,District of Columbia
-London,United Kingdom,Electronic,36,145,0.2483,0.1634,1.52,
-Toronto,Canada,Jazz,3,33,0.0909,0.0759,1.20,Ontario
-Portland,United States,Alternative,4,30,0.1333,0.1583,0.84,Oregon
-Tokyo,Japan,Ambient,4,15,0.2667,0.0369,7.22,
-Philadelphia,United States,Punk,6,30,0.2000,0.0521,3.84,Pennsylvania
-Portland,United States,Electronic,3,30,0.1000,0.1634,0.61,Oregon
-Chicago,United States,Punk,5,95,0.0526,0.0521,1.01,Illinois
-Philadelphia,United States,Jazz,4,30,0.1333,0.0759,1.76,Pennsylvania
-Los Angeles,United States,Metal,3,166,0.0181,0.0567,0.32,California
-Paris,France,Electronic,5,25,0.2000,0.1634,1.22,
-Seattle,United States,Alternative,8,20,0.4000,0.1583,2.53,Washington
-Toronto,Canada,R&B/Soul,6,33,0.1818,0.0364,4.99,Ontario
-Portland,United States,Metal,7,30,0.2333,0.0567,4.12,Oregon
-Nashville,United States,Country,3,19,0.1579,0.0076,20.81,Tennessee
-Toronto,Canada,Rock,6,33,0.1818,0.0718,2.53,Ontario
-Los Angeles,United States,World,3,166,0.0181,0.0577,0.31,California
-Los Angeles,United States,Ambient,9,166,0.0542,0.0369,1.47,California
-New York,United States,Ambient,3,208,0.0144,0.0369,0.39,New York
-Washington,United States,Hip-Hop/Rap,5,34,0.1471,0.0784,1.88,District of Columbia
-New York,United States,Alternative,41,208,0.1971,0.1583,1.25,New York
-San Francisco,United States,World,3,30,0.1000,0.0577,1.73,California
-Montréal,Canada,R&B/Soul,4,32,0.1250,0.0364,3.43,Québec
-Boston,United States,Alternative,6,11,0.5455,0.1583,3.45,Massachusetts
-Chicago,United States,Jazz,27,95,0.2842,0.0759,3.75,Illinois
-London,United Kingdom,Reggae,4,145,0.0276,0.0076,3.64,
-Montréal,Canada,Hip-Hop/Rap,3,32,0.0938,0.0784,1.20,Québec
-Washington,United States,Alternative,5,34,0.1471,0.1583,0.93,District of Columbia
-Oakland,United States,Punk,3,23,0.1304,0.0521,2.50,California
-Brighton,United Kingdom,Alternative,3,10,0.3000,0.1583,1.89,
-Bristol,United Kingdom,Electronic,5,11,0.4545,0.1634,2.78,
-Berlin,Germany,Alternative,3,40,0.0750,0.1583,0.47,
-Detroit,United States,Hip-Hop/Rap,11,25,0.4400,0.0784,5.61,Michigan
-Pittsburgh,United States,Metal,11,12,0.9167,0.0567,16.18,Pennsylvania
-Los Angeles,United States,Electronic,29,166,0.1747,0.1634,1.07,California
-London,United Kingdom,R&B/Soul,4,145,0.0276,0.0364,0.76,
-London,United Kingdom,Rock,8,145,0.0552,0.0718,0.77,
-Los Angeles,United States,Alternative,33,166,0.1988,0.1583,1.26,California
-London,United Kingdom,Jazz,26,145,0.1793,0.0759,2.36,
-London,United Kingdom,Alternative,12,145,0.0828,0.1583,0.52,
-Oakland,United States,Rock,6,23,0.2609,0.0718,3.63,California
-Los Angeles,United States,Rock,8,166,0.0482,0.0718,0.67,California
-London,United Kingdom,Punk,9,145,0.0621,0.0521,1.19,
-Baltimore,United States,Experimental,5,17,0.2941,0.0875,3.36,Maryland
-London,United Kingdom,Experimental,10,145,0.0690,0.0875,0.79,
-Toronto,Canada,Electronic,5,33,0.1515,0.1634,0.93,Ontario
-Tokyo,Japan,Electronic,3,15,0.2000,0.1634,1.22,
-London,United Kingdom,Folk,4,145,0.0276,0.0278,0.99,
-London,United Kingdom,World,5,145,0.0345,0.0577,0.60,
-New York,United States,R&B/Soul,10,208,0.0481,0.0364,1.32,New York
-London,United Kingdom,Classical,3,145,0.0207,0.0106,1.95,
-New York,United States,Punk,9,208,0.0433,0.0521,0.83,New York
-New York,United States,Hip-Hop/Rap,25,208,0.1202,0.0784,1.53,New York
-London,United Kingdom,Pop,9,145,0.0621,0.0410,1.51,
-Oakland,United States,Experimental,3,23,0.1304,0.0875,1.49,California
-Portland,United States,Experimental,3,30,0.1000,0.0875,1.14,Oregon
-Philadelphia,United States,Alternative,4,30,0.1333,0.1583,0.84,Pennsylvania
-Los Angeles,United States,Funk,4,166,0.0241,0.0121,1.98,California
-New York,United States,Classical,5,208,0.0240,0.0106,2.26,New York
-New York,United States,Metal,7,208,0.0337,0.0567,0.59,New York
-Montréal,Canada,Pop,4,32,0.1250,0.0410,3.05,Québec
-San Francisco,United States,Electronic,3,30,0.1000,0.1634,0.61,California
-Chicago,United States,Alternative,11,95,0.1158,0.1583,0.73,Illinois
-Portland,United States,Rock,3,30,0.1000,0.0718,1.39,Oregon
-Chicago,United States,R&B/Soul,5,95,0.0526,0.0364,1.45,Illinois
-Baltimore,United States,Punk,3,17,0.1765,0.0521,3.39,Maryland
-Brighton,United Kingdom,Experimental,3,10,0.3000,0.0875,3.43,
-New York,United States,Electronic,17,208,0.0817,0.1634,0.50,New York
-San Francisco,United States,Alternative,5,30,0.1667,0.1583,1.05,California
-Brighton,United Kingdom,Electronic,3,10,0.3000,0.1634,1.84,
-Toronto,Canada,Alternative,4,33,0.1212,0.1583,0.77,Ontario
-Paris,France,R&B/Soul,3,25,0.1200,0.0364,3.30,
-Los Angeles,United States,Punk,3,166,0.0181,0.0521,0.35,California
-Richmond,United States,Hip-Hop/Rap,4,13,0.3077,0.0784,3.92,Virginia
+Berlin,Germany,Electronic,20,41,0.4878,0.1629,3.00,
+Detroit,United States,Electronic,5,25,0.2000,0.1629,1.23,Michigan
+New York,United States,World,11,218,0.0505,0.0559,0.90,New York
+Chicago,United States,Rock,10,98,0.1020,0.0715,1.43,Illinois
+Montréal,Canada,Experimental,6,34,0.1765,0.0880,2.01,Québec
+Los Angeles,United States,Experimental,12,170,0.0706,0.0880,0.80,California
+New York,United States,Pop,10,218,0.0459,0.0408,1.12,New York
+Washington,United States,Electronic,5,34,0.1471,0.1629,0.90,District of Columbia
+Philadelphia,United States,Experimental,3,31,0.0968,0.0880,1.10,Pennsylvania
+Los Angeles,United States,Hip-Hop/Rap,19,170,0.1118,0.0797,1.40,California
+Seattle,United States,Punk,4,21,0.1905,0.0510,3.73,Washington
+Los Angeles,United States,Jazz,7,170,0.0412,0.0758,0.54,California
+London,United Kingdom,Hip-Hop/Rap,5,151,0.0331,0.0797,0.42,
+Portland,United States,Ambient,3,31,0.0968,0.0374,2.59,Oregon
+Baltimore,United States,Alternative,3,19,0.1579,0.1590,0.99,Maryland
+Washington,United States,World,3,34,0.0882,0.0559,1.58,District of Columbia
+New York,United States,Jazz,24,218,0.1101,0.0758,1.45,New York
+Philadelphia,United States,Rock,3,31,0.0968,0.0715,1.35,Pennsylvania
+Glasgow,United Kingdom,Experimental,3,13,0.2308,0.0880,2.62,
+Chicago,United States,Electronic,13,98,0.1327,0.1629,0.81,Illinois
+New York,United States,Rock,8,218,0.0367,0.0715,0.51,New York
+Los Angeles,United States,R&B/Soul,11,170,0.0647,0.0355,1.82,California
+Melbourne,Australia,Rock,9,33,0.2727,0.0715,3.82,
+Los Angeles,United States,Pop,19,170,0.1118,0.0408,2.74,California
+Austin,United States,Electronic,3,15,0.2000,0.1629,1.23,Texas
+Los Angeles,United States,Folk,3,170,0.0176,0.0277,0.64,California
+Melbourne,Australia,Electronic,3,33,0.0909,0.1629,0.56,
+Portland,United States,Folk,4,31,0.1290,0.0277,4.66,Oregon
+New York,United States,Folk,4,218,0.0183,0.0277,0.66,New York
+New York,United States,Experimental,27,218,0.1239,0.0880,1.41,New York
+Tokyo,Japan,Experimental,4,16,0.2500,0.0880,2.84,
+Philadelphia,United States,Electronic,6,31,0.1935,0.1629,1.19,Pennsylvania
+Washington,United States,Rock,3,34,0.0882,0.0715,1.23,District of Columbia
+Chicago,United States,Experimental,9,98,0.0918,0.0880,1.04,Illinois
+Glasgow,United Kingdom,Alternative,3,13,0.2308,0.1590,1.45,
+Montréal,Canada,Alternative,7,34,0.2059,0.1590,1.30,Québec
+Nashville,United States,Alternative,5,21,0.2381,0.1590,1.50,Tennessee
+San Francisco,United States,Rock,7,30,0.2333,0.0715,3.27,California
+London,United Kingdom,Ambient,6,151,0.0397,0.0374,1.06,
+Berlin,Germany,World,6,41,0.1463,0.0559,2.62,
+Austin,United States,Folk,3,15,0.2000,0.0277,7.22,Texas
+Melbourne,Australia,Alternative,12,33,0.3636,0.1590,2.29,
+Paris,France,Jazz,7,25,0.2800,0.0758,3.69,
+San Francisco,United States,Metal,3,30,0.1000,0.0574,1.74,California
+Chicago,United States,Hip-Hop/Rap,9,98,0.0918,0.0797,1.15,Illinois
+Washington,United States,Punk,6,34,0.1765,0.0510,3.46,District of Columbia
+London,United Kingdom,Electronic,38,151,0.2517,0.1629,1.55,
+Toronto,Canada,Jazz,3,34,0.0882,0.0758,1.16,Ontario
+Portland,United States,Alternative,4,31,0.1290,0.1590,0.81,Oregon
+Tokyo,Japan,Ambient,4,16,0.2500,0.0374,6.68,
+Philadelphia,United States,Punk,6,31,0.1935,0.0510,3.79,Pennsylvania
+Portland,United States,Electronic,3,31,0.0968,0.1629,0.59,Oregon
+Chicago,United States,Punk,5,98,0.0510,0.0510,1.00,Illinois
+Philadelphia,United States,Jazz,4,31,0.1290,0.0758,1.70,Pennsylvania
+Los Angeles,United States,Metal,3,170,0.0176,0.0574,0.31,California
+Paris,France,Electronic,5,25,0.2000,0.1629,1.23,
+Seattle,United States,Alternative,8,21,0.3810,0.1590,2.40,Washington
+Toronto,Canada,R&B/Soul,6,34,0.1765,0.0355,4.97,Ontario
+Portland,United States,Metal,7,31,0.2258,0.0574,3.94,Oregon
+Nashville,United States,Country,5,21,0.2381,0.0088,27.21,Tennessee
+Toronto,Canada,Rock,6,34,0.1765,0.0715,2.47,Ontario
+Los Angeles,United States,World,3,170,0.0176,0.0559,0.32,California
+Los Angeles,United States,Ambient,10,170,0.0588,0.0374,1.57,California
+New York,United States,Ambient,3,218,0.0138,0.0374,0.37,New York
+Washington,United States,Hip-Hop/Rap,5,34,0.1471,0.0797,1.84,District of Columbia
+New York,United States,Alternative,43,218,0.1972,0.1590,1.24,New York
+San Francisco,United States,World,3,30,0.1000,0.0559,1.79,California
+Montréal,Canada,R&B/Soul,4,34,0.1176,0.0355,3.32,Québec
+Boston,United States,Alternative,6,11,0.5455,0.1590,3.43,Massachusetts
+Chicago,United States,Jazz,27,98,0.2755,0.0758,3.63,Illinois
+London,United Kingdom,Reggae,4,151,0.0265,0.0073,3.63,
+Montréal,Canada,Hip-Hop/Rap,3,34,0.0882,0.0797,1.11,Québec
+Washington,United States,Alternative,5,34,0.1471,0.1590,0.93,District of Columbia
+Philadelphia,United States,Hip-Hop/Rap,3,31,0.0968,0.0797,1.21,Pennsylvania
+Oakland,United States,Punk,3,25,0.1200,0.0510,2.35,California
+Brighton,United Kingdom,Alternative,3,10,0.3000,0.1590,1.89,
+Bristol,United Kingdom,Electronic,5,12,0.4167,0.1629,2.56,
+Berlin,Germany,Alternative,3,41,0.0732,0.1590,0.46,
+Detroit,United States,Hip-Hop/Rap,11,25,0.4400,0.0797,5.52,Michigan
+Pittsburgh,United States,Metal,12,15,0.8000,0.0574,13.95,Pennsylvania
+Los Angeles,United States,Electronic,29,170,0.1706,0.1629,1.05,California
+London,United Kingdom,R&B/Soul,4,151,0.0265,0.0355,0.75,
+London,United Kingdom,Rock,8,151,0.0530,0.0715,0.74,
+Los Angeles,United States,Alternative,33,170,0.1941,0.1590,1.22,California
+London,United Kingdom,Jazz,26,151,0.1722,0.0758,2.27,
+London,United Kingdom,Alternative,15,151,0.0993,0.1590,0.62,
+Austin,United States,Alternative,3,15,0.2000,0.1590,1.26,Texas
+Oakland,United States,Rock,6,25,0.2400,0.0715,3.36,California
+Los Angeles,United States,Rock,8,170,0.0471,0.0715,0.66,California
+London,United Kingdom,Punk,9,151,0.0596,0.0510,1.17,
+Baltimore,United States,Experimental,6,19,0.3158,0.0880,3.59,Maryland
+London,United Kingdom,Experimental,10,151,0.0662,0.0880,0.75,
+Toronto,Canada,Electronic,5,34,0.1471,0.1629,0.90,Ontario
+Tokyo,Japan,Electronic,3,16,0.1875,0.1629,1.15,
+London,United Kingdom,Folk,4,151,0.0265,0.0277,0.96,
+London,United Kingdom,World,5,151,0.0331,0.0559,0.59,
+New York,United States,R&B/Soul,10,218,0.0459,0.0355,1.29,New York
+London,United Kingdom,Classical,3,151,0.0199,0.0102,1.95,
+New York,United States,Punk,9,218,0.0413,0.0510,0.81,New York
+New York,United States,Hip-Hop/Rap,27,218,0.1239,0.0797,1.55,New York
+London,United Kingdom,Pop,9,151,0.0596,0.0408,1.46,
+Oakland,United States,Experimental,3,25,0.1200,0.0880,1.36,California
+Portland,United States,Experimental,3,31,0.0968,0.0880,1.10,Oregon
+Philadelphia,United States,Alternative,4,31,0.1290,0.1590,0.81,Pennsylvania
+Los Angeles,United States,Funk,5,170,0.0294,0.0126,2.33,California
+New York,United States,Classical,5,218,0.0229,0.0102,2.25,New York
+New York,United States,Metal,7,218,0.0321,0.0574,0.56,New York
+Montréal,Canada,Pop,6,34,0.1765,0.0408,4.32,Québec
+San Francisco,United States,Electronic,3,30,0.1000,0.1629,0.61,California
+Chicago,United States,Alternative,11,98,0.1122,0.1590,0.71,Illinois
+Portland,United States,Rock,3,31,0.0968,0.0715,1.35,Oregon
+Chicago,United States,R&B/Soul,6,98,0.0612,0.0355,1.73,Illinois
+Baltimore,United States,Punk,3,19,0.1579,0.0510,3.09,Maryland
+Brighton,United Kingdom,Experimental,3,10,0.3000,0.0880,3.41,
+New York,United States,Electronic,18,218,0.0826,0.1629,0.51,New York
+San Francisco,United States,Alternative,5,30,0.1667,0.1590,1.05,California
+Brighton,United Kingdom,Electronic,3,10,0.3000,0.1629,1.84,
+Toronto,Canada,Alternative,5,34,0.1471,0.1590,0.93,Ontario
+Paris,France,R&B/Soul,3,25,0.1200,0.0355,3.38,
+Los Angeles,United States,Punk,3,170,0.0176,0.0510,0.35,California
+Bristol,United Kingdom,Hip-Hop/Rap,3,12,0.2500,0.0797,3.14,
+Richmond,United States,Hip-Hop/Rap,4,13,0.3077,0.0797,3.86,Virginia
