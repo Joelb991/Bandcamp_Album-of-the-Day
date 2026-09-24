@@ -192,7 +192,7 @@ After that the warehouse holds URLs and every later refresh stops on its own.
 │   ├── views.sql            # the semantic layer (8 analytics views)
 │   └── app_role.sql         # read-only role for the web app
 ├── notebooks/               # 01 collection → 06 geographic hubs
-├── tests/                   # 94 tests: parsing, cleaning, identity, transforms, refresh
+├── tests/                   # 96 tests: parsing, cleaning, identity, transforms, refresh
 ├── tools/build_notebooks.py # notebooks generated from reviewable Python
 ├── data/
 │   ├── raw/                 # original exports + HTML cache (git-ignored)
@@ -220,7 +220,7 @@ scheduled pipeline and the analysis run identical code.
 
 ## Engineering notes
 
-**Tested.** 94 tests cover the HTML parsers, the nine-step location cleaner,
+**Tested.** 96 tests cover the HTML parsers, the nine-step location cleaner,
 the identity hash, the transform pipeline and the refresh path. Every location test case is a
 real value from the dataset that broke something.
 

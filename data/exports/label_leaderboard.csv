@@ -1,7 +1,7 @@
 record_label,features,distinct_artists,distinct_authors,primary_genre,primary_country,first_feature,latest_feature
 (Liv).e,1,1,1,,United States,2023-02-23,2023-02-23
 100% Silk,1,1,1,Electronic,United States,2025-12-03,2025-12-03
-20 Buck Spin,12,11,9,Metal,United States,2018-03-19,2024-12-05
+20 Buck Spin,13,12,10,Metal,United States,2018-03-19,2026-08-10
 577 Records,1,1,1,Jazz,United States,2022-01-21,2022-01-21
 A L T E R,1,1,1,Alternative,United Kingdom,2017-12-22,2017-12-22
 A. Billi Free,1,1,1,R&B/Soul,United States,2019-08-12,2019-08-12
@@ -9,6 +9,7 @@ A. G. Cook,1,1,1,Alternative,United States,2020-08-12,2020-08-12
 Abdominal,1,1,1,Hip-Hop/Rap,Canada,2017-05-23,2017-05-23
 Aboutface,1,1,1,World,United Kingdom,2025-06-09,2025-06-09
 adlabels,1,1,1,Classical,Germany,2023-08-15,2023-08-15
+Aesthetical,1,1,1,Electronic,France,2026-07-06,2026-07-06
 Africa Express,1,1,1,World,Mali,2019-07-15,2019-07-15
 Africa Seven,1,1,1,Spoken Word,United Kingdom,2024-11-27,2024-11-27
 AGATUS,1,1,1,,Greece,2016-12-12,2016-12-12
@@ -28,6 +29,7 @@ Andreaus Haley,1,1,1,Hip-Hop/Rap,United States,2025-03-11,2025-03-11
 Andrés,1,1,1,Hip-Hop/Rap,United States,2019-11-27,2019-11-27
 Angélica Garcia,1,1,1,Pop,United States,2020-03-05,2020-03-05
 Annie Hardy,1,1,1,Rock,United States,2021-06-09,2021-06-09
+Another Planet,1,1,1,Hip-Hop/Rap,United States,2026-07-10,2026-07-10
 Anthology Recordings,1,1,1,Funk,United States,2018-11-21,2018-11-21
 Antiquated Future Records,1,1,1,Ambient,United States,2019-09-04,2019-09-04
 Anysia Kym,1,1,1,R&B/Soul,United States,2025-05-05,2025-05-05
@@ -64,6 +66,7 @@ Black Techno Matters,1,1,1,Electronic,United States,2024-01-12,2024-01-12
 BLACK TO COMM,1,1,1,Experimental,Germany,2023-07-14,2023-07-14
 Blank Forms Editions,3,3,3,Experimental,United States,2019-06-11,2020-08-17
 BLCR Laboratories,1,1,1,,Netherlands,2016-09-26,2016-09-26
+Blockhead,1,1,1,Hip-Hop/Rap,United States,2026-07-15,2026-07-15
 Blut Aus Nord,1,1,1,,France,2016-06-28,2016-06-28
 Bon Iver,1,1,1,Alternative,United States,2016-09-29,2016-09-29
 "Bonnie ""Prince"" Billy",1,1,1,Country,United States,2017-05-16,2017-05-16
@@ -87,7 +90,7 @@ Carla Bozulich / Evangelista,1,1,1,Experimental,United States,2018-05-10,2018-05
 Caroline Shaw,1,1,1,Classical,United States,2019-04-23,2019-04-23
 Carpark Records,1,1,1,Alternative,United States,2021-01-04,2021-01-04
 caterina barbieri,1,1,1,Ambient,Germany,2022-07-08,2022-07-08
-Charbel Haber,1,1,1,Classical,Lebanon,2026-04-29,2026-04-29
+Chapter Music,1,1,1,Alternative,Australia,2026-09-04,2026-09-04
 Charles 'Poppy Bob' Walker,1,1,1,Ambient,United States,2026-02-09,2026-02-09
 Charly Records,1,1,1,Reggae,United Kingdom,2025-02-06,2025-02-06
 CHERISE,1,1,1,,United Kingdom,2023-07-07,2023-07-07
@@ -101,7 +104,7 @@ Chromesthesia,1,1,1,Electronic,United Kingdom,2024-11-12,2024-11-12
 Citrus City Records,1,1,1,,United States,2017-02-08,2017-02-08
 Conjurer,1,1,1,Metal,United Kingdom,2019-08-19,2019-08-19
 Constellation Records,1,1,1,Experimental,Canada,2025-09-17,2025-09-17
-Constellation Tatsu,1,1,1,Electronic,United States,2023-01-18,2023-01-18
+Constellation Tatsu,2,2,2,Electronic,United States,2023-01-18,2026-08-03
 CONTAINER,1,1,1,Electronic,United Kingdom,2020-03-16,2020-03-16
 Cosmic Vibrations,1,1,1,Jazz,United States,2020-09-21,2020-09-21
 Counter Intuitive Records,1,1,1,Alternative,United States,2021-08-02,2021-08-02
@@ -176,6 +179,7 @@ Fat Beats Records,2,1,2,Funk,United States,2018-05-30,2020-03-09
 Fat Ray,1,1,1,Hip-Hop/Rap,United States,2026-04-22,2026-04-22
 Fat Tony,2,1,2,Hip-Hop/Rap,United States,2020-02-05,2023-08-28
 Father/Daughter Records,2,2,2,Alternative,United States,2017-05-12,2020-06-17
+Feeding Tube Records,1,1,1,Rock,United States,2026-06-18,2026-06-18
 Fievel Is Glauque,1,1,1,Experimental,United States,2022-03-03,2022-03-03
 FIGURE,1,1,1,Electronic,Germany,2021-04-02,2021-04-02
 Filth is Eternal,1,1,1,Punk,United States,2023-09-28,2023-09-28
@@ -187,7 +191,7 @@ Folktale Records,1,1,1,,United States,2016-07-08,2016-07-08
 foodman,1,1,1,Experimental,Japan,2021-07-13,2021-07-13
 Fortuna Records,1,1,1,World,Israel,2018-10-02,2018-10-02
 foundation.fm records,1,1,1,Electronic,United Kingdom,2024-03-11,2024-03-11
-Four Flies Records,1,1,1,Soundtrack,Italy,2022-11-22,2022-11-22
+Four Flies Records,2,2,2,Funk,Italy,2022-11-22,2026-06-02
 FPE Records,2,2,2,Experimental,United States,2019-12-03,2024-08-07
 frances chang,1,1,1,Experimental,United States,2024-02-16,2024-02-16
 Freedom To Spend,2,2,1,Devotional,United States,2025-11-13,2026-04-02
@@ -203,15 +207,17 @@ Gareth Quinn Redmond,1,1,1,Ambient,Ireland,2025-09-09,2025-09-09
 garth erasmus,1,1,1,World,South Africa,2024-04-24,2024-04-24
 Get Physical Music,1,1,1,Electronic,Germany,2017-11-30,2017-11-30
 Gilead Media,2,2,2,Metal,United States,2019-06-27,2022-03-31
+Girl Talk,1,1,1,Hip-Hop/Rap,United States,2026-08-18,2026-08-18
 Gost,1,1,1,Electronic,United States,2018-03-23,2018-03-23
 Graveface Records & Curiosities,1,1,1,Rock,United States,2021-05-03,2021-05-03
+GREEN LUNG,1,1,1,Metal,United Kingdom,2026-09-16,2026-09-16
 grim streaker,1,1,1,Alternative,United States,2017-08-07,2017-08-07
 Grimalkin Records,1,1,1,R&B/Soul,United States,2020-03-23,2020-03-23
 Grouper,1,1,1,Experimental,,2019-03-06,2019-03-06
 Gunn - Truscinski Duo,1,1,1,Experimental,United States,2025-02-28,2025-02-28
 gutterring,1,1,1,Electronic,United Kingdom,2022-10-03,2022-10-03
 GYGAX,1,1,1,Rock,United States,2019-06-24,2019-06-24
-Habibi Funk Records,8,7,7,World,Germany,2017-03-03,2025-07-08
+Habibi Funk Records,9,8,8,World,Germany,2017-03-03,2026-08-11
 HAKUNA KULALA,7,7,5,Electronic,Uganda,2021-05-06,2025-10-03
 Hammers Of Misfortune,1,1,1,Metal,United States,2022-12-05,2022-12-05
 Hany Mehanna - هاني مهنى,1,1,1,Experimental,Egypt,2018-01-17,2018-01-17
@@ -240,7 +246,7 @@ InFiné,1,1,1,,France,2016-09-22,2016-09-22
 INFINITY KNIVES,1,1,1,Hip-Hop/Rap,United States,2022-06-22,2022-06-22
 Infrequent Seams,1,1,1,Experimental,United States,2026-04-28,2026-04-28
 Init Records,1,1,1,Metal,United States,2021-08-24,2021-08-24
-International Anthem,25,18,13,Jazz,United States,2016-06-24,2025-11-11
+International Anthem,26,19,14,Jazz,United States,2016-06-24,2026-09-24
 Invictus Productions,2,2,2,Metal,Ireland,2017-11-20,2022-06-10
 "Invisible, Inc.",1,1,1,Electronic,United Kingdom,2019-01-24,2019-01-24
 Iron & Wine,1,1,1,Alternative,United States,2017-08-24,2017-08-24
@@ -256,6 +262,7 @@ Jan Jelinek,1,1,1,Electronic,Germany,2025-01-15,2025-01-15
 Jane Inc.,1,1,1,,Canada,2021-03-17,2021-03-17
 JAUBI,1,1,1,Jazz,United Kingdom,2024-09-10,2024-09-10
 JAW GEMS,1,1,1,,United States,2016-08-30,2016-08-30
+Jazz Dispensary,1,1,1,Jazz,United States,2026-06-04,2026-06-04
 Jazz Is Dead,1,1,1,Jazz,United States,2020-03-20,2020-03-20
 Jess Sah Bi & Peter One,1,1,1,Folk,,2018-08-08,2018-08-08
 Jigsaw Records,1,1,1,,United States,2016-09-28,2016-09-28
@@ -264,6 +271,7 @@ JMC Aggregate,1,1,1,Comedy,United States,2017-04-17,2017-04-17
 Jobcentre Rejects,1,1,1,Metal,Sweden,2019-04-19,2019-04-19
 John Davis & The Cicadas,1,1,1,Alternative,United States,2017-11-27,2017-11-27
 John Dwyer,1,1,1,Punk,United States,2025-04-18,2025-04-18
+Jolly Discs,1,1,1,Electronic,United Kingdom,2026-09-02,2026-09-02
 Jon Mckiel,1,1,1,Alternative,Canada,2020-04-29,2020-04-29
 José Mauro,1,1,1,,Brazil,2016-09-23,2016-09-23
 JoVia Armstrong & Eunoia Society,1,1,1,Jazz,United States,2022-07-22,2022-07-22
@@ -278,14 +286,14 @@ kelly moran,1,1,1,Experimental,United States,2024-03-29,2024-03-29
 KEV BROWN,1,1,1,Hip-Hop/Rap,United States,2018-11-08,2018-11-08
 Khruangbin,1,1,1,Rock,United States,2022-02-22,2022-02-22
 King Gizzard & The Lizard Wizard,1,1,1,Rock,Australia,2025-06-13,2025-06-13
-Kiwi jr,1,1,1,Rock,Canada,2022-08-02,2022-08-02
+Kiwi jr,2,2,1,Alternative,Canada,2022-08-02,2026-08-14
 KNEECAP,2,1,2,Hip-Hop/Rap,United Kingdom,2024-06-12,2026-05-04
 Knxwledge.,1,1,1,Hip-Hop/Rap,Japan,2020-01-09,2020-01-09
 Kokoroko,1,1,1,Jazz,United Kingdom,2019-03-21,2019-03-21
 L I T H I C S,1,1,1,Punk,United States,2018-05-22,2018-05-22
 L.A. WITCH,1,1,1,Punk,United States,2017-10-20,2017-10-20
 L'Orange,1,1,1,,United States,2019-10-10,2019-10-10
-L'Rain,1,1,1,Experimental,United States,2023-10-18,2023-10-18
+L'Rain,2,1,2,Experimental,United States,2023-10-18,2026-08-17
 La Souterraine,1,1,1,Hip-Hop/Rap,France,2020-01-06,2020-01-06
 LA VIDA ES UN MUS DISCOS,3,3,2,Punk,United Kingdom,2021-12-14,2022-07-01
 Laetitia Sadier,1,1,1,,United Kingdom,2017-03-27,2017-03-27
@@ -325,6 +333,7 @@ Martha High and The Italian Royal Family,1,1,1,R&B/Soul,United States,2020-01-23
 Marvin Tate's D-Settlement,1,1,1,Rock,United States,2022-11-03,2022-11-03
 Mass Appeal,1,1,1,,United States,2016-08-24,2016-08-24
 MASTER BOOT RECORD,3,1,1,Electronic,Italy,2018-10-16,2022-05-23
+maya ongaku,1,1,1,Ambient,Japan,2026-08-12,2026-08-12
 Maybe Mars,1,1,1,,China,2016-11-03,2016-11-03
 mejiwahn,1,1,1,Experimental,United States,2022-07-06,2022-07-06
 Mello Music Group,1,1,1,Hip-Hop/Rap,United States,2022-11-30,2022-11-30
@@ -356,6 +365,7 @@ Mount Eerie,1,1,1,Alternative,United States,2018-03-20,2018-03-20
 Mr. Greg & Cass McCombs,1,1,1,Kids,United States,2023-08-25,2023-08-25
 Mulatu Astatke,1,1,1,World,Ethiopia,2024-11-11,2024-11-11
 Mulatu Astatke & Black Jesus Experience,1,1,1,Jazz,Ethiopia,2020-07-02,2020-07-02
+Music in Exile,1,1,1,Jazz,Australia,2026-06-22,2026-06-22
 mutual benefit,1,1,1,Alternative,United States,2018-09-27,2018-09-27
 My Bags,3,2,3,Experimental,France,2016-12-19,2018-11-09
 Naomi Punk (Captured Tracks),1,1,1,Experimental,United States,2017-08-23,2017-08-23
@@ -386,6 +396,7 @@ Omnidisc,1,1,1,Electronic,United States,2022-12-07,2022-12-07
 Oneida & Rhys Chatham,1,1,1,,United States,2016-11-30,2016-11-30
 Only Lovers Records,1,1,1,Rock,France,2018-03-21,2018-03-21
 OOIOO,1,1,1,Alternative,Japan,2026-05-01,2026-05-01
+Open Mike Eagle,1,1,1,Hip-Hop/Rap,United States,2026-08-19,2026-08-19
 Orange Milk Records,4,4,4,Electronic,,2019-07-30,2024-06-27
 ORCHID TAPES,1,1,1,,United States,2016-08-16,2016-08-16
 Osees,1,1,1,Punk,United States,2025-08-11,2025-08-11
@@ -434,6 +445,7 @@ Rhythm Section International,1,1,1,Electronic,United Kingdom,2022-08-15,2022-08-
 Rian Treanor,1,1,1,Electronic,United Kingdom,2025-09-11,2025-09-11
 Ric Wilson,1,1,1,Hip-Hop/Rap,United States,2020-05-13,2020-05-13
 Richard Dawson,1,1,1,Rock,United Kingdom,2021-11-23,2021-11-23
+Richard Franecki,1,1,1,Experimental,United States,2026-06-29,2026-06-29
 Richard Norris,1,1,1,Folk,United Kingdom,2022-02-07,2022-02-07
 Rid Of Me,1,1,1,Rock,United States,2023-11-03,2023-11-03
 Ripple Music,2,2,2,Metal,United States,2018-10-15,2022-03-08
@@ -441,6 +453,7 @@ Rokia Koné,1,1,1,World,Mali,2022-02-15,2022-02-15
 Ropeadope Select,1,1,1,Experimental,United States,2017-08-02,2017-08-02
 ROSA PISTOLA,1,1,1,Electronic,Mexico,2026-04-14,2026-04-14
 RUI HO,1,1,1,Electronic,China,2020-09-10,2020-09-10
+Ruptured Records,1,1,1,Alternative,Lebanon,2026-08-26,2026-08-26
 Rush Hour Music,1,1,1,Electronic,Netherlands,2018-03-09,2018-03-09
 RVNG Intl.,2,2,2,Electronic,United States,2016-11-09,2024-11-01
 Safe Ground Rec.,1,1,1,Ambient,Belgium,2022-12-09,2022-12-09
@@ -466,7 +479,7 @@ SIIFU,1,1,1,Hip-Hop/Rap,United States,2020-11-11,2020-11-11
 Sir Shina Peters & His International Stars,1,1,1,World,Nigeria,2019-01-29,2019-01-29
 sir Was,1,1,1,,Sweden,2017-03-08,2017-03-08
 SKiN GRAFT Records,2,2,2,Experimental,United States,2019-03-25,2023-02-16
-Sleeping Giant Glossolalia,1,1,1,Rock,United States,2019-04-05,2019-04-05
+Sleeping Giant Glossolalia,2,2,2,Alternative,United States,2019-04-05,2026-06-08
 SLOTHRUST,1,1,1,Rock,United States,2021-09-13,2021-09-13
 slowthai,1,1,1,Hip-Hop/Rap,United Kingdom,2021-02-10,2021-02-10
 Smithsonian Folkways Recordings,2,1,2,World,United States,2019-08-23,2020-02-03
@@ -509,6 +522,7 @@ Termanology,1,1,1,Hip-Hop/Rap,United States,2020-04-06,2020-04-06
 terry malts,1,1,1,,United States,2016-10-31,2016-10-31
 Th' Losin Streaks,1,1,1,Rock,United States,2018-12-06,2018-12-06
 Thalia Zedek Band,1,1,1,,United States,2016-08-19,2016-08-19
+the Black Drumset,1,1,1,Alternative,United States,2026-07-27,2026-07-27
 the body,2,2,2,Metal,United States,2018-05-15,2024-02-23
 The Calais Sessions,1,1,1,,United Kingdom,2016-07-27,2016-07-27
 The Comet Is Coming,1,1,1,Jazz,United Kingdom,2017-05-19,2017-05-19
@@ -534,6 +548,7 @@ Tompkins Square,3,3,3,Jazz,United States,2019-11-12,2022-09-26
 TONER,1,1,1,Rock,United States,2021-09-08,2021-09-08
 Tramp Rec.,1,1,1,Jazz,Germany,2025-02-05,2025-02-05
 Transversales Disques,3,3,3,Electronic,France,2020-03-13,2025-05-07
+TraTraTrax,1,1,1,Electronic,Colombia,2026-06-10,2026-06-10
 TRAX Records,1,1,1,Electronic,United States,2018-04-17,2018-04-17
 Tresor Records,1,1,1,Electronic,Germany,2025-06-25,2025-06-25
 Tricky // False Idols,1,1,1,Alternative,Germany,2025-10-07,2025-10-07
@@ -549,6 +564,7 @@ Uno Loop,1,1,1,Jazz,,2023-06-21,2023-06-21
 Upset The Rhythm,1,1,1,Punk,United Kingdom,2023-04-12,2023-04-12
 V4 Visions,1,1,1,R&B/Soul,United Kingdom,2022-03-16,2022-03-16
 Vampisoul,1,1,1,Experimental,Spain,2022-04-11,2022-04-11
+Vijay Iyer,1,1,1,Jazz,United States,2026-08-27,2026-08-27
 Von Pea,1,1,1,Hip-Hop/Rap,United States,2025-12-02,2025-12-02
 VP Records,2,2,2,Reggae,United States,2024-08-15,2025-05-28
 Vyva Melinkolya,1,1,1,Alternative,United States,2023-05-15,2023-05-15

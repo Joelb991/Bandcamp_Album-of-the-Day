@@ -74,6 +74,21 @@ class TestBusinessRules:
         artist, label = parse.resolve_label_and_artist("Aphex Twin", "Syro", "Aphex Twin")
         assert (artist, label) == ("Aphex Twin", parse.INDEPENDENT_LABEL)
 
+    def test_self_titled_headline_with_a_comma_keeps_its_artist(self):
+        # "Celestial Power, Celestial Power" on Feeding Tube Records was being
+        # credited to the label, and marked self-released.
+        artist, label = parse.resolve_label_and_artist(
+            "Celestial Power", "Celestial Power", "Feeding Tube Records",
+            headline_had_comma=True,
+        )
+        assert (artist, label) == ("Celestial Power", "Feeding Tube Records")
+
+    def test_self_titled_and_self_released_is_still_independent(self):
+        artist, label = parse.resolve_label_and_artist(
+            "Hannah Lew", "Hannah Lew", "Hannah Lew", headline_had_comma=True
+        )
+        assert (artist, label) == ("Hannah Lew", parse.INDEPENDENT_LABEL)
+
     def test_normal_signed_release_is_left_alone(self):
         artist, label = parse.resolve_label_and_artist(
             "Kelly Lee Owens", "Inner Song", "Smalltown Supersound"
