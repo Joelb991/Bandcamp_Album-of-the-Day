@@ -222,9 +222,36 @@ CANADA_PROVINCES = {
     "Northwest Territories", "Nunavut", "Yukon",
 }
 
-# Treated as countries in their own right: they appear standalone in the
-# source data, and mapping tools expect them as separate territories.
+# Resolved to country "United Kingdom" with the constituent kept as ``state``,
+# so "London, England" and "London, United Kingdom" count as one country in
+# the dashboard while the finer detail survives for anyone who wants it.
 UK_CONSTITUENTS = {"England", "Scotland", "Wales", "Northern Ireland"}
+
+# "Georgia" is both a US state and a country, and the country lookup wins -
+# which quietly filed Atlanta under the Caucasus. A city on this list resolves
+# to the state; anything else ("Tbilisi, Georgia") keeps the country.
+GEORGIA_US_CITIES = {
+    "Atlanta", "Athens", "Savannah", "Augusta", "Macon", "Columbus",
+    "Decatur", "Perry", "Marietta", "Alpharetta",
+}
+
+# Values that parse correctly but should be *reported* under a canonical name.
+# ``location_clean`` keeps the original text - it is the dim_place key and the
+# audit trail - only the parsed city / state change.
+#
+# New York's boroughs are one city for coverage purposes: split apart, Brooklyn
+# looks like a mid-sized city and New York falls behind Los Angeles. And
+# Tableau geocodes "District of Columbia" but not the "D.C." spelling the
+# source data uses.
+BOROUGH_CANONICAL = {
+    ("Brooklyn", "New York"):      "New York",
+    ("Queens", "New York"):        "New York",
+    ("Manhattan", "New York"):     "New York",
+    ("Bronx", "New York"):         "New York",
+    ("The Bronx", "New York"):     "New York",
+    ("Staten Island", "New York"): "New York",
+}
+STATE_CANONICAL = {"D.C.": "District of Columbia"}
 
 # Country names that contain a comma, which would otherwise be split apart.
 MULTI_WORD_COUNTRY_WITH_COMMA = {"São Tomé and Príncipe"}
@@ -296,7 +323,7 @@ def normalize_country(name: str) -> str:
     return COUNTRY_ALIASES.get(name, name)
 
 
-def split_location(location) -> tuple[str | None, str | None, str | None]:
+def _parse_location(location) -> tuple[str | None, str | None, str | None]:
     """Split a standardised location into ``(city, state, country)``.
 
     Rules, in the order they are tried:
@@ -307,9 +334,11 @@ def split_location(location) -> tuple[str | None, str | None, str | None]:
       province, or - failing all three - an unqualified city.
     * Two tokens are the common case: ``City, Country``, ``City, State``, or
       ``Region, Country``.
-    * UK constituent countries are returned as the *country*, not as a region
-      under "United Kingdom", because that is how they appear standalone in
-      the source data and how mapping tools expect them.
+    * UK constituent countries resolve to country "United Kingdom" with the
+      constituent (England, Scotland, ...) kept as the state, so the country
+      count isn't inflated by "London, England" vs "London, United Kingdom".
+    * "Georgia" is the US state when the city is a known Georgia city
+      (Atlanta, Athens, Savannah) and the country otherwise (Tbilisi).
     """
     if location is None or str(location).strip() == "" or (
         isinstance(location, float) and pd.isna(location)
@@ -329,7 +358,7 @@ def split_location(location) -> tuple[str | None, str | None, str | None]:
     if len(parts) == 1:
         value = parts[0]
         if value in UK_CONSTITUENTS:
-            return (None, None, value)
+            return (None, value, "United Kingdom")
         if is_country(value):
             return (None, None, normalize_country(value))
         if value in US_STATES:
@@ -342,9 +371,11 @@ def split_location(location) -> tuple[str | None, str | None, str | None]:
     if len(parts) == 2:
         first, second = parts
         if first in UK_CONSTITUENTS and second == "United Kingdom":
-            return (None, None, first)
+            return (None, first, "United Kingdom")
         if first in US_STATES and second in ("United States", "Usa"):
             return (None, first, "United States")
+        if second == "Georgia" and first in GEORGIA_US_CITIES:
+            return (first, "Georgia", "United States")
         if is_country(second):
             return (first, None, normalize_country(second))
         if second in US_STATES:
@@ -352,13 +383,35 @@ def split_location(location) -> tuple[str | None, str | None, str | None]:
         if second in CANADA_PROVINCES:
             return (first, second, "Canada")
         if second in UK_CONSTITUENTS:
-            return (first, None, second)
+            return (first, second, "United Kingdom")
         return (first, second, None)
 
     # -- Three or more tokens --------------------------------------------
     if is_country(parts[-1]):
         return (", ".join(parts[:-1]), None, normalize_country(parts[-1]))
     return (", ".join(parts[:-1]), parts[-1], None)
+
+
+def canonicalise_place(city, state, country):
+    """Apply :data:`BOROUGH_CANONICAL` and :data:`STATE_CANONICAL`.
+
+    Only fires for the United States - the maps are US-specific, and keeping
+    the guard explicit means a "Queens, New York" in some other country's data
+    can never be swallowed by accident.
+    """
+    if country == "United States":
+        city = BOROUGH_CANONICAL.get((city, state), city)
+        state = STATE_CANONICAL.get(state, state)
+    return (city, state, country)
+
+
+def split_location(location) -> tuple[str | None, str | None, str | None]:
+    """Parse a standardised location, then apply the canonical-name maps.
+
+    This is the public entry point; :func:`_parse_location` documents the
+    parsing rules and :func:`canonicalise_place` the renames that follow.
+    """
+    return canonicalise_place(*_parse_location(location))
 
 
 def add_location_features(

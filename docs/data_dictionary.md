@@ -66,18 +66,25 @@ Tableau, the web app and the notebooks agree on week boundaries.
 |---|---|---|---|---|
 | `label_location_raw` | text | 3.5% | 422 | The label's self-reported location, exactly as typed. Kept for auditability. |
 | `location_clean` | text | 3.5% | 407 | After the nine-step cleaner. 15 duplicate spellings collapsed. |
-| `city` | text | **17.3%** | 320 | Null when the source gave only a country or region — not a pipeline failure. |
-| `state` | text | **43.0%** | 51 | US states and Canadian provinces only. Null for everywhere else by design. |
-| `country` | text | 3.5% | 82 | Resolved country. **96.5% coverage; zero values fail to resolve.** |
+| `city` | text | **17.3%** | 317 | Null when the source gave only a country or region — not a pipeline failure. New York's boroughs report as `New York`. |
+| `state` | text | **41.7%** | 54 | US states (D.C. as `District of Columbia`), Canadian provinces and UK constituent countries. Null for everywhere else by design. |
+| `country` | text | 3.5% | 80 | Resolved country. **96.5% coverage; zero values fail to resolve.** |
 
 > **The measurement caveat that matters most:** this is the *label's* location,
 > not the artist's. An artist in Lagos signed to a Berlin label registers as
 > Berlin. Conclusions drawn from these columns are about where the
 > infrastructure of independent music sits, not where musicians live.
 
-UK constituent countries (England, Scotland, Wales, Northern Ireland) appear as
-`country` values in their own right, matching how they occur standalone in the
-source and how mapping tools expect them.
+Three parsing rules are worth knowing before you count anything:
+
+- **UK constituent countries** (England, Scotland, Wales, Northern Ireland)
+  resolve to `country = United Kingdom` with the constituent kept in `state`,
+  so "London, England" and "London, United Kingdom" are one country.
+- **New York's boroughs** (Brooklyn, Queens, Manhattan, Bronx, Staten Island)
+  report as `city = New York`. `location_clean` keeps the borough, so nothing
+  is lost — it is the `dim_place` key and the audit trail.
+- **"Georgia"** is the US state when the city is a known Georgia city
+  (Atlanta, Athens, Savannah, …) and the country otherwise (Tbilisi).
 
 ## Spotify enrichment
 

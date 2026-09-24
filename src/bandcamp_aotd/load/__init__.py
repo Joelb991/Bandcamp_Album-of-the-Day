@@ -19,7 +19,22 @@ logger = logging.getLogger(__name__)
 __all__ = [
     "apply_sql_file", "fetch_known_article_urls", "load_analytics_table",
     "read_analytics_table", "write_csv", "write_tableau_extract",
+    "export_views", "ANALYTICS_VIEWS",
 ]
+
+# The semantic layer, as separate BI-ready tables. These exist because the
+# metrics that are genuinely hard to express in a BI tool - Shannon entropy per
+# author, city/genre lift against a global baseline - are already computed
+# correctly in SQL. Re-deriving them with Tableau calculated fields would mean
+# a second, subtly different definition of the same number.
+ANALYTICS_VIEWS = {
+    "vw_coverage_by_country": "coverage_by_country",
+    "vw_city_genre_specialisation": "city_genre_specialisation",
+    "vw_author_profile": "author_profile",
+    "vw_genre_trend": "genre_trend",
+    "vw_label_leaderboard": "label_leaderboard",
+    "vw_pipeline_health": "pipeline_health",
+}
 
 
 def write_csv(df: pd.DataFrame, path: Path | None = None) -> Path:
@@ -34,6 +49,39 @@ def write_csv(df: pd.DataFrame, path: Path | None = None) -> Path:
     df.to_csv(path, index=False)
     logger.info("Wrote %d rows to %s", len(df), path)
     return path
+
+
+def export_views(out_dir: Path | None = None, dsn: str | None = None) -> dict:
+    """Write each analytics view to its own CSV for the BI layer.
+
+    Returns ``{filename: row count}``. A view that fails to read is logged and
+    skipped rather than aborting the whole export - a missing view should not
+    cost you the five that worked.
+    """
+    from .postgres import _connect, read_sql
+
+    out_dir = Path(out_dir or config.EXPORTS_DIR)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    written = {}
+    connection = _connect(dsn)
+    try:
+        for view, filename in ANALYTICS_VIEWS.items():
+            try:
+                df = read_sql(f"SELECT * FROM {config.DATABASE.schema}.{view}", connection)
+            except Exception as exc:  # noqa: BLE001 - one bad view is not fatal
+                logger.warning("Could not export %s: %s", view, exc)
+                continue
+            path = out_dir / f"{filename}.csv"
+            df.to_csv(path, index=False)
+            written[path.name] = len(df)
+            logger.info("Exported %-32s -> %-34s %5d rows", view, path.name, len(df))
+    finally:
+        connection.close()
+
+    logger.info("Exported %d of %d views to %s",
+                len(written), len(ANALYTICS_VIEWS), out_dir)
+    return written
 
 
 def write_tableau_extract(df: pd.DataFrame, path: Path | None = None) -> Path:

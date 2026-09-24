@@ -14,9 +14,9 @@ More than half of everything featured comes from a US-based label.
 
 | | Share of located features |
 |---|---|
-| United States | **54.3%** |
-| Top 3 countries (US, UK, Canada) | **73.5%** |
-| Remaining 79 countries combined | **~19%** |
+| United States | **54.8%** |
+| Top 3 countries (US, UK, Canada) | **74.9%** |
+| Remaining 77 countries combined | **25.1%** |
 
 The static number undersells the more interesting result. **The US share has
 fallen steadily since 2018:**

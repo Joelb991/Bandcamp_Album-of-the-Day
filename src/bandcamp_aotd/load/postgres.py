@@ -256,10 +256,24 @@ def load_analytics_table(
     return summary
 
 
+def read_sql(sql: str, connection) -> pd.DataFrame:
+    """Run a query on an open connection and return a DataFrame.
+
+    Deliberately not ``pd.read_sql``: pandas routes raw DBAPI connections
+    through a compatibility path that emits a UserWarning on every call and
+    nudges you toward SQLAlchemy. A cursor plus ``cursor.description`` gives
+    the same result, silently, with one less runtime dependency.
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        columns = [column.name for column in cursor.description]
+        return pd.DataFrame(cursor.fetchall(), columns=columns)
+
+
 def read_analytics_table(dsn: str | None = None) -> pd.DataFrame:
     """Read ``vw_article`` back out - what the analysis notebooks call."""
     connection = _connect(dsn)
     try:
-        return pd.read_sql("SELECT * FROM bandcamp.vw_article", connection)
+        return read_sql(f"SELECT * FROM {config.DATABASE.schema}.vw_article", connection)
     finally:
         connection.close()

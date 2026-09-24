@@ -84,16 +84,23 @@ GROUP BY country;
 -- Lift is extremely noisy in the tail: a city with 12 features and a single
 -- "Kids" record scores a lift of 66 and tops any unfiltered ranking, which
 -- means nothing. Two floors keep the output honest - the city needs at least
--- 10 features overall, and the city/genre pair needs at least 3. The raw
--- counts are kept in the view so a reader can judge the evidence themselves
--- rather than taking the ratio on trust.
+-- 10 *tagged* features overall, and the city/genre pair needs at least 3. The
+-- raw counts are kept in the view so a reader can judge the evidence
+-- themselves rather than taking the ratio on trust.
+--
+-- The grain is city + state + country, not city + country: Portland, Oregon
+-- and Portland, Maine are different scenes, and so are Richmond, Virginia and
+-- Richmond, California. Carrying ``state`` through also lets Tableau's
+-- geocoder place US cities unambiguously instead of flagging "Portland" as
+-- unknown. It sits last in the column list because CREATE OR REPLACE VIEW can
+-- append columns but never reorder them.
 -- ----------------------------------------------------------------------------
 CREATE OR REPLACE VIEW vw_city_genre_specialisation AS
 WITH city_totals AS (
-    SELECT city, country, COUNT(*) AS city_features
+    SELECT city, state, country, COUNT(*) AS city_features
     FROM vw_article
     WHERE city IS NOT NULL AND genre_tag IS NOT NULL
-    GROUP BY city, country
+    GROUP BY city, state, country
     HAVING COUNT(*) >= 10
 ),
 genre_totals AS (
@@ -104,10 +111,10 @@ genre_totals AS (
     GROUP BY genre_tag
 ),
 city_genre AS (
-    SELECT a.city, a.country, a.genre_tag, COUNT(*) AS features
+    SELECT a.city, a.state, a.country, a.genre_tag, COUNT(*) AS features
     FROM vw_article a
     WHERE a.city IS NOT NULL AND a.genre_tag IS NOT NULL
-    GROUP BY a.city, a.country, a.genre_tag
+    GROUP BY a.city, a.state, a.country, a.genre_tag
 )
 SELECT
     cg.city,
@@ -117,9 +124,12 @@ SELECT
     ct.city_features,
     ROUND((cg.features::numeric / ct.city_features), 4)          AS city_share,
     ROUND(gt.global_share, 4)                                    AS global_share,
-    ROUND((cg.features::numeric / ct.city_features) / NULLIF(gt.global_share, 0), 2) AS lift
+    ROUND((cg.features::numeric / ct.city_features) / NULLIF(gt.global_share, 0), 2) AS lift,
+    cg.state
 FROM city_genre cg
-JOIN city_totals  ct ON ct.city = cg.city AND ct.country IS NOT DISTINCT FROM cg.country
+JOIN city_totals  ct ON ct.city = cg.city
+                    AND ct.state   IS NOT DISTINCT FROM cg.state
+                    AND ct.country IS NOT DISTINCT FROM cg.country
 JOIN genre_totals gt ON gt.genre_tag = cg.genre_tag
 WHERE cg.features >= 3;
 

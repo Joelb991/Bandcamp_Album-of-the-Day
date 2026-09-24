@@ -5,7 +5,7 @@ production-shaped ELT pipeline, a modelled Postgres warehouse, and an analysis
 of how editorial attention is actually distributed across genres, geographies
 and writers.
 
-**2,287 articles · 2011–2026 · 82 countries · 343 contributors · 585 labels**
+**2,287 articles · 2011–2026 · 80 countries · 343 contributors · 585 labels**
 
 ---
 
@@ -187,7 +187,7 @@ freshness and match rates for the dashboard's "data as of" badge.
 |---|---|---|
 | 01 | [Data collection](notebooks/01_data_collection.ipynb) | Crawling the archive politely and incrementally |
 | 02 | [Spotify enrichment](notebooks/02_spotify_enrichment.ipynb) | Catalog matching, checkpointing, rate-limit handling |
-| 03 | [Cleaning & geography](notebooks/03_data_cleaning_and_geography.ipynb) | 422 messy location strings → 82 countries |
+| 03 | [Cleaning & geography](notebooks/03_data_cleaning_and_geography.ipynb) | 422 messy location strings → 80 countries |
 | 04 | [Exploratory analysis](notebooks/04_exploratory_analysis.ipynb) | Cadence, genre mix, indie share, contributors |
 | 05 | [Editorial bias analysis](notebooks/05_editorial_bias_analysis.ipynb) | Chi-square, Shannon entropy, label affinity |
 | 06 | [Global indie hubs](notebooks/06_geographic_hubs.ipynb) | City/genre lift — testing the received wisdom |

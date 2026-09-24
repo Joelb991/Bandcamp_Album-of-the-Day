@@ -201,7 +201,14 @@ def cmd_backfill(args) -> int:
 
 
 def cmd_export(args) -> int:
-    from .load import read_analytics_table, write_tableau_extract
+    from .load import export_views, read_analytics_table, write_tableau_extract
+
+    if args.views:
+        if not config.DATABASE.configured:
+            logger.error("--views reads from Postgres; set DATABASE_URL in .env first.")
+            return 1
+        written = export_views()
+        return 0 if written else 1
 
     if args.from_db:
         df = read_analytics_table()
@@ -290,6 +297,8 @@ def build_parser() -> argparse.ArgumentParser:
     export = subparsers.add_parser("export", help="write the Tableau extract")
     export.add_argument("--input", help="analytics CSV to export")
     export.add_argument("--from-db", action="store_true", help="read from Postgres instead")
+    export.add_argument("--views", action="store_true",
+                        help="export every analytics view as its own CSV (for Tableau)")
     export.set_defaults(func=cmd_export)
 
     refresh = subparsers.add_parser("refresh", help="scrape -> enrich -> transform -> load")
@@ -301,7 +310,7 @@ def build_parser() -> argparse.ArgumentParser:
     # so legacy is False here — but it must be *set*, or cmd_enrich raises
     # AttributeError when refresh delegates to it.
     refresh.set_defaults(func=cmd_refresh, input=None, output=None,
-                         legacy=False, max_calls=None)
+                         legacy=False, max_calls=None, views=False)
 
     return parser
 
