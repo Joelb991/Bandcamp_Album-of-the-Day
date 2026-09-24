@@ -67,6 +67,20 @@ REQUEST_TIMEOUT = (10, 60)
 DEFAULT_PAUSE_SECONDS = 0.35
 
 
+def album_key(artist, album) -> str:
+    """The checkpoint key for one album lookup.
+
+    A Spotify result depends only on the artist and album searched for, so
+    that is what the checkpoint is keyed on. It used to be keyed on the
+    DataFrame index, which silently gave a fresh scrape (rows 0..n) the
+    results of whichever legacy rows had held those positions.
+    """
+    def norm(value) -> str:
+        return "" if pd.isna(value) else " ".join(str(value).split()).casefold()
+
+    return f"{norm(artist)} || {norm(album)}"
+
+
 class SpotifyAPIError(Exception):
     """Raised when the Spotify API returns an error response."""
 
@@ -451,33 +465,44 @@ class SpotifyClient:
         of spotify_* columns to merge onto the original with pd.concat(axis=1).
 
         If checkpoint_path is given, progress is saved there every checkpoint_every
-        rows. If that file already exists when called, rows already 'matched' or
-        confirmed 'no_match' are skipped; rows that previously errored (e.g. hit
+        rows. If that file already exists when called, albums already 'matched' or
+        confirmed 'no_match' are skipped; ones that previously errored (e.g. hit
         the rate limit) are retried — safe to interrupt and just re-run the same
         cell to resume.
+
+        The checkpoint is keyed on the album (see ``album_key``), not on the
+        row's position, so it stays valid across different input files and an
+        album featured twice is looked up once.
         """
         results: dict = {}
         if checkpoint_path and os.path.exists(checkpoint_path):
             loaded = pd.read_csv(checkpoint_path, index_col=0).to_dict(orient="index")
+            # Checkpoints written before album keys existed are keyed 0..n by
+            # row position. Reusing them would hand a new input file the results
+            # of whichever old rows sat at the same positions, so skip them.
+            positional = [k for k in loaded if not isinstance(k, str)]
+            if positional:
+                logger.info("Ignoring %d position-keyed checkpoint entries from an "
+                            "older format", len(positional))
             results = {
-                idx: r for idx, r in loaded.items()
-                if not str(r.get("spotify_match_status", "")).startswith("error")
+                key: r for key, r in loaded.items()
+                if isinstance(key, str)
+                and not str(r.get("spotify_match_status", "")).startswith("error")
             }
-            retrying = len(loaded) - len(results)
-            logger.info("Resuming from checkpoint: %d rows done, %d to retry",
-                        len(results), retrying)
+            logger.info("Resuming from checkpoint: %d albums already resolved", len(results))
 
+        keys = [album_key(a, b) for a, b in zip(df[artist_col], df[album_col], strict=True)]
         total = len(df)
-        for i, (idx, row) in enumerate(df.iterrows()):
+        for i, ((_, row), key) in enumerate(zip(df.iterrows(), keys, strict=True)):
             if self.budget_exhausted:
                 logger.warning(
-                    "Call budget reached (%d). Stopping with %d/%d rows resolved - "
-                    "re-run to continue.", self.call_budget, len(results), total,
+                    "Call budget reached (%d). Stopping at row %d/%d - "
+                    "re-run to continue.", self.call_budget, i, total,
                 )
                 break
             try:
-                if idx not in results:
-                    results[idx] = self.enrich_album(
+                if key not in results:
+                    results[key] = self.enrich_album(
                         row[artist_col], row[album_col], full_details=full_details
                     )
                     self.calls_made += 1
@@ -501,5 +526,7 @@ class SpotifyClient:
 
         out = pd.DataFrame.from_dict(results, orient="index")
         # reindex (not .loc) so a partial run returns empty rows for the
-        # indices it never reached instead of raising KeyError.
-        return out.reindex(df.index)
+        # albums it never reached instead of raising KeyError.
+        out = out.reindex(keys)
+        out.index = df.index
+        return out

@@ -163,6 +163,17 @@ Bandcamp publishes ~5 new features a week. A weekly refresh is enough:
 Each run writes a row to `pipeline_run`, and `vw_pipeline_health` exposes
 freshness and match rates for the dashboard's "data as of" badge.
 
+**The first refresh after a backfill needs a page limit.** Historic rows came
+from an export with no article URLs, so the crawler has nothing to recognise
+and would otherwise re-crawl the whole archive. Four index pages (120
+articles) covers a few months of new features:
+
+```bash
+python -m bandcamp_aotd refresh --max-pages 4
+```
+
+After that the warehouse holds URLs and every later refresh stops on its own.
+
 ---
 
 ## Repository layout
@@ -181,7 +192,7 @@ freshness and match rates for the dashboard's "data as of" badge.
 │   ├── views.sql            # the semantic layer (8 analytics views)
 │   └── app_role.sql         # read-only role for the web app
 ├── notebooks/               # 01 collection → 06 geographic hubs
-├── tests/                   # 81 tests: parsing, cleaning, identity, transforms
+├── tests/                   # 94 tests: parsing, cleaning, identity, transforms, refresh
 ├── tools/build_notebooks.py # notebooks generated from reviewable Python
 ├── data/
 │   ├── raw/                 # original exports + HTML cache (git-ignored)
@@ -209,8 +220,8 @@ scheduled pipeline and the analysis run identical code.
 
 ## Engineering notes
 
-**Tested.** 81 tests cover the HTML parsers, the nine-step location cleaner,
-the identity hash and the transform pipeline. Every location test case is a
+**Tested.** 94 tests cover the HTML parsers, the nine-step location cleaner,
+the identity hash, the transform pipeline and the refresh path. Every location test case is a
 real value from the dataset that broke something.
 
 ```bash
