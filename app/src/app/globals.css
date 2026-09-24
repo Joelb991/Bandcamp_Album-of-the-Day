@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+/*
+ * Dark by design (it matches the portfolio this is linked from, and album art
+ * reads best on it). The chart colours were validated against --surface with
+ * the dataviz palette checker:
+ *   --series  #2fa2bc  single-series teal: in band, chroma >= 0.10, >= 3:1
+ *   --seq-1..6         ordinal teal ramp for the map: monotone L, >= 2:1 at the dark end
+ */
+:root {
+  color-scheme: dark;
+
+  --bg: #0f1215;
+  --surface: #15191c;
+  --surface-2: #1b2024;
+  --surface-3: #22282d;
+  --line: #262c31;
+  --baseline: #384046;
+
+  --ink: #f2f4f3;
+  --ink-2: #b9c0c2;
+  --muted: #858e92;
+
+  --series: #2fa2bc;
+  --deemph: #4a545a;
+  --accent-ink: #7fcadd;
+
+  --seq-1: #2a545f;
+  --seq-2: #326c7b;
+  --seq-3: #3d879a;
+  --seq-4: #4fa2b7;
+  --seq-5: #6cc1d7;
+  --seq-6: #9be1f4;
+  --land: #262c31;
+
+  --good: #0ca30c;
+  --critical: #d03b3b;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-baseline: var(--baseline);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-series: var(--series);
+  --color-deemph: var(--deemph);
+  --color-accent: var(--accent-ink);
+  --font-sans: var(--font-inter);
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: #2fa2bc55;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Native <select> styling so filters match the rest of the chrome. */
+select.control {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23858e92' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
