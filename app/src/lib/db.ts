@@ -9,8 +9,11 @@ import postgres from "postgres";
  * Tableau and the notebooks use - so a metric is defined once for every
  * surface. Point DATABASE_URL at a read-only role (see db/app_role.sql).
  *
- * `prepare: false` keeps it compatible with Supabase's transaction pooler
- * (port 6543) as well as the session pooler (5432).
+ * Connect through Supabase's *session* pooler (port 5432). The transaction
+ * pooler (6543) stalls under `next build`: postgres.js pipelines several
+ * queries per connection, and with 10 build workers pages hit the 60s limit
+ * or receive another query's rows. The site regenerates once a day, so a
+ * session connection per worker is plenty.
  */
 let client: postgres.Sql | undefined;
 
