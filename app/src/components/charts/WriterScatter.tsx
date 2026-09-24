@@ -3,6 +3,7 @@
 import { useState, type KeyboardEvent, type PointerEvent } from "react";
 import type { Writer } from "@/lib/queries";
 import { linear, Tooltip, TipRow, TipTitle, useWidth } from "./shared";
+import { fixed } from "@/lib/format";
 
 /**
  * Reviews (x) against genre entropy (y). Specialists sit low, generalists
@@ -128,14 +129,14 @@ export default function WriterScatter({ writers, labelNames }: { writers: Writer
       {a && (
         <Tooltip x={x(a.reviews)} y={y(a.entropy)} containerWidth={width}>
           <TipTitle>{a.author}</TipTitle>
-          <TipRow value={a.entropy.toFixed(2)} label="bits of genre spread" keyColor="var(--series)" />
+          <TipRow value={fixed(a.entropy, 2)} label="bits of genre spread" keyColor="var(--series)" />
           <div className="mt-1 space-y-0.5 text-ink-2">
             <div>
               <span className="text-ink tnum">{a.reviews}</span> reviews · <span className="text-ink tnum">{a.genres}</span> genres ·{" "}
               <span className="text-ink tnum">{a.countries}</span> countries
             </div>
             <div>
-              <span className="text-ink tnum">{a.indieShare.toFixed(0)}%</span> self-released
+              <span className="text-ink tnum">{fixed(a.indieShare, 0)}%</span> self-released
             </div>
           </div>
         </Tooltip>

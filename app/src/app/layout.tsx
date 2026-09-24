@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     template: "%s · AOTD Analytics",
   },
   description:
-    "Where does editorial attention go? An end-to-end analytics project on 2,287 Bandcamp Daily Album of the Day features: scraper, Postgres warehouse, SQL semantic layer, Tableau and this web app.",
+    "Where does editorial attention go? An end-to-end analytics project on every Bandcamp Daily Album of the Day since 2011: scraper, Postgres warehouse, SQL semantic layer, Tableau and this web app.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

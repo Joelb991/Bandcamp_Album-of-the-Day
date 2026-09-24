@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 import { getHeadline } from "@/lib/queries";
-import { fmtInt } from "@/lib/format";
+import { fmtInt, fixed } from "@/lib/format";
 
 export const alt = "AOTD Analytics: fifteen years of Bandcamp's Album of the Day, in aggregate";
 export const size = { width: 1200, height: 630 };
@@ -13,8 +13,8 @@ export default async function OpengraphImage() {
   const stats = [
     [fmtInt(h.features), "features"],
     [String(h.countries), "countries"],
-    [`${h.usShare.toFixed(0)}%`, "from US labels"],
-    [`${h.indieShare.toFixed(0)}%`, "self-released"],
+    [`${fixed(h.usShare, 0)}%`, "from US labels"],
+    [`${fixed(h.indieShare, 0)}%`, "self-released"],
   ];
   return new ImageResponse(
     (

@@ -3,6 +3,7 @@
 import { useRef, useState, type FocusEvent, type PointerEvent } from "react";
 import type { Scene } from "@/lib/queries";
 import { Tooltip, TipRow, TipTitle } from "./shared";
+import { fixed } from "@/lib/format";
 
 /**
  * City x genre lift, with the evidence printed beside every bar.
@@ -51,7 +52,7 @@ export default function LiftBars({ scenes, strongMin = 5 }: { scenes: Scene[]; s
               onPointerLeave={() => setTip(null)}
               onFocus={onFocus(s)}
               onBlur={() => setTip(null)}
-              aria-label={`${s.city}, ${s.genre}: lift ${s.lift.toFixed(1)}, ${s.features} of ${s.cityFeatures} features`}
+              aria-label={`${s.city}, ${s.genre}: lift ${fixed(s.lift, 1)}, ${s.features} of ${s.cityFeatures} features`}
               className="grid grid-cols-[1fr_auto] items-center gap-x-3 rounded-md px-2 py-1.5 outline-offset-0 hover:bg-surface-2 sm:grid-cols-[11rem_1fr_6.5rem]"
             >
               <div className="col-span-2 truncate text-sm sm:col-span-1">
@@ -73,7 +74,7 @@ export default function LiftBars({ scenes, strongMin = 5 }: { scenes: Scene[]; s
                   className="absolute top-1/2 -translate-y-1/2 pl-1.5 text-xs font-semibold text-ink tnum"
                   style={{ left: `${(s.lift / max) * 100}%` }}
                 >
-                  {s.lift.toFixed(1)}×
+                  {fixed(s.lift, 1)}×
                 </span>
               </div>
               <div className="text-right text-xs text-ink-2 tnum">
@@ -91,14 +92,14 @@ export default function LiftBars({ scenes, strongMin = 5 }: { scenes: Scene[]; s
             {tip.s.city}
             {tip.s.state ? `, ${tip.s.state}` : `, ${tip.s.country}`} · {tip.s.genre}
           </TipTitle>
-          <TipRow value={`${tip.s.lift.toFixed(1)}×`} label="lift" keyColor={tip.s.features >= strongMin ? "var(--series)" : "var(--deemph)"} />
+          <TipRow value={`${fixed(tip.s.lift, 1)}×`} label="lift" keyColor={tip.s.features >= strongMin ? "var(--series)" : "var(--deemph)"} />
           <div className="mt-1 space-y-0.5 text-ink-2">
             <div>
-              <span className="text-ink tnum">{(tip.s.cityShare * 100).toFixed(0)}%</span> of {tip.s.city}&apos;s features
+              <span className="text-ink tnum">{fixed(tip.s.cityShare * 100, 0)}%</span> of {tip.s.city}&apos;s features
               ({tip.s.features}/{tip.s.cityFeatures})
             </div>
             <div>
-              vs <span className="text-ink tnum">{(tip.s.globalShare * 100).toFixed(1)}%</span> of the whole archive
+              vs <span className="text-ink tnum">{fixed(tip.s.globalShare * 100, 1)}%</span> of the whole archive
             </div>
           </div>
         </Tooltip>

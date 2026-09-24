@@ -5,13 +5,17 @@ import WriterScatter from "@/components/charts/WriterScatter";
 import Cover from "@/components/Cover";
 import DataTable from "@/components/DataTable";
 import { ButtonLink, Card, Caveat, ChartTitle, Container, Eyebrow, Stat } from "@/components/ui";
-import { fmtInt, fmtPct } from "@/lib/format";
+import { fmtInt, fmtPct, fixed } from "@/lib/format";
 import { TABLEAU_URL } from "@/lib/links";
 import { getCountries, getHeadline, getLatestWithCovers, getRosterShift, getScenes, getWriters, getYearly } from "@/lib/queries";
 
 // Statically generated, then regenerated at most once a day. If the database
 // is unreachable during a regeneration, the last good page keeps serving.
 export const revalidate = 86400;
+
+// A city/genre pair needs this many features before its lift is called
+// credible - the same bar the chart uses to colour a bar teal rather than grey.
+const STRONG_EVIDENCE = 5;
 
 function Finding({
   n,
@@ -82,10 +86,15 @@ export default async function Home() {
   const specialist = regulars[0];
   const prolific = writers[0];
 
-  // Scenes: the highest lift, and the highest lift that clears the evidence bar.
+  // Scenes: the highest lift, and the two best-evidenced pairs besides it. The
+  // wording can't assume the top pair is thin - small bases move fast, and a
+  // refresh can push it over the evidence bar.
   const top = scenes[0];
-  const credible = scenes.find((s) => s.features >= 5)!;
-  const biggest = scenes.filter((s) => s.features >= 5).sort((a, b) => b.features - a.features)[0];
+  const topIsThin = top.features < STRONG_EVIDENCE;
+  const [best1, best2] = scenes
+    .filter((s) => s !== top && s.features >= STRONG_EVIDENCE)
+    .sort((a, b) => b.features - a.features);
+  const sceneName = (s: (typeof scenes)[number]) => `${s.city} ${s.genre.toLowerCase()}`;
 
   return (
     <>
@@ -139,7 +148,7 @@ export default async function Home() {
       <Finding
         n="01"
         kicker="Geography"
-        title={`The US share of coverage fell from ${peak.usShare.toFixed(0)}% to ${lastFull.usShare.toFixed(0)}%`}
+        title={`The US share of coverage fell from ${fixed(peak.usShare, 0)}% to ${fixed(lastFull.usShare, 0)}%`}
         chart={
           <>
             <ChartTitle
@@ -152,9 +161,9 @@ export default async function Home() {
               yTicks={[0, 25, 50, 75]}
               labelAt={[peak.year, lastFull.year, lastYear.year]}
               partialLast={partial}
-              reference={{ y: h.usShare, label: `All-time ${h.usShare.toFixed(1)}%` }}
+              reference={{ y: h.usShare, label: `All-time ${fixed(h.usShare, 1)}%` }}
               valueLabel="from US labels"
-              ariaLabel={`Line chart: US share of features by year, from ${peak.usShare.toFixed(1)}% in ${peak.year} to ${lastFull.usShare.toFixed(1)}% in ${lastFull.year}.`}
+              ariaLabel={`Line chart: US share of features by year, from ${fixed(peak.usShare, 1)}% in ${peak.year} to ${fixed(lastFull.usShare, 1)}% in ${lastFull.year}.`}
             />
             <DataTable
               caption="US share of Album of the Day features by year"
@@ -175,12 +184,16 @@ export default async function Home() {
         </p>
         <p>
           The US share peaked at {fmtPct(peak.usShare)} in {peak.year}, moved between{" "}
-          {Math.min(...plateau.map((r) => r.usShare)).toFixed(0)}% and {Math.max(...plateau.map((r) => r.usShare)).toFixed(0)}% for the
-          next {plateau.length} years, then dropped sharply to {fmtPct(lastFull.usShare)} in {lastFull.year}. Output stayed flat at about {avgPerYear} features a year, so international
-          coverage grew by <em>reallocating</em> attention, not by adding more of it.
+          {fixed(Math.min(...plateau.map((r) => r.usShare)), 0)}% and {fixed(Math.max(...plateau.map((r) => r.usShare)), 0)}% for the
+          next {plateau.length} years, then dropped sharply to {fmtPct(lastFull.usShare)} in {lastFull.year}
+          {partial && lastYear.usShare - lastFull.usShare > 2 && (
+            <> ({lastYear.year} so far is back up to {fmtPct(lastYear.usShare)}, so {lastFull.year} may prove the low point)</>
+          )}
+          . Output stayed flat at about {avgPerYear} features a year, so international coverage grew by <em>reallocating</em>{" "}
+          attention, not by adding more of it.
         </p>
         <p>
-          It wasn&apos;t a change of writers. {roster.continuingShare.toFixed(0)}% of features since 2024 came from people already
+          It wasn&apos;t a change of writers. {fixed(roster.continuingShare, 0)}% of features since 2024 came from people already
           writing for the section in 2018–23, and those same {roster.writers} writers&apos; US share fell from{" "}
           {fmtPct(roster.before)} to {fmtPct(roster.after)}. The shift happened inside the existing roster.
         </p>
@@ -204,9 +217,9 @@ export default async function Home() {
               yTicks={[0, 25, 50, 75, 100]}
               labelAt={[yearly.find((r) => r.indieShare === indieMin)!.year, yearly.find((r) => r.indieShare === indieMax)!.year]}
               partialLast={partial}
-              reference={{ y: h.indieShare, label: `All-time ${h.indieShare.toFixed(1)}%` }}
+              reference={{ y: h.indieShare, label: `All-time ${fixed(h.indieShare, 1)}%` }}
               valueLabel="self-released"
-              ariaLabel={`Line chart: self-released share by year, ranging from ${indieMin.toFixed(1)}% to ${indieMax.toFixed(1)}%.`}
+              ariaLabel={`Line chart: self-released share by year, ranging from ${fixed(indieMin, 1)}% to ${fixed(indieMax, 1)}%.`}
             />
             <DataTable
               caption="Self-released share of features by year"
@@ -222,13 +235,13 @@ export default async function Home() {
       >
         <p>
           <strong className="font-semibold text-ink">{fmtPct(h.indieShare)}</strong> of Album of the Day features credit no label at
-          all, and the ratio has stayed between {indieMin.toFixed(0)}% and {indieMax.toFixed(0)}% every year. The section&apos;s
+          all, and the ratio has stayed between {fixed(indieMin, 0)}% and {fixed(indieMax, 0)}% every year. The section&apos;s
           centre of gravity isn&apos;t small labels. It&apos;s artists with no label.
         </p>
         <p>
-          The spread by country is wide. Among countries with 30+ features, {hi1.country} ({hi1.indieShare.toFixed(0)}%) and{" "}
-          {hi2.country} ({hi2.indieShare.toFixed(0)}%) run well above average, while {lo1.country} ({lo1.indieShare.toFixed(0)}%) and{" "}
-          {lo2.country} ({lo2.indieShare.toFixed(0)}%) run well below. That points to different independent-music infrastructures
+          The spread by country is wide. Among countries with 30+ features, {hi1.country} ({fixed(hi1.indieShare, 0)}%) and{" "}
+          {hi2.country} ({fixed(hi2.indieShare, 0)}%) run well above average, while {lo1.country} ({fixed(lo1.indieShare, 0)}%) and{" "}
+          {lo2.country} ({fixed(lo2.indieShare, 0)}%) run well below. That points to different independent-music infrastructures
           rather than different editorial treatment.
         </p>
         <Caveat>
@@ -257,7 +270,7 @@ export default async function Home() {
                 { label: "Reviews", value: (r) => r.reviews, numeric: true },
                 { label: "Genres", value: (r) => r.genres, numeric: true },
                 { label: "Countries", value: (r) => r.countries, numeric: true },
-                { label: "Entropy (bits)", value: (r) => r.entropy.toFixed(2), numeric: true },
+                { label: "Entropy (bits)", value: (r) => fixed(r.entropy, 2), numeric: true },
                 { label: "Self-released", value: (r) => fmtPct(r.indieShare, 0), numeric: true },
               ]}
             />
@@ -271,7 +284,7 @@ export default async function Home() {
         </p>
         <p>
           They also cover very different ground. {specialist.author} has covered just {specialist.genres} genres in{" "}
-          {specialist.reviews} reviews ({specialist.entropy.toFixed(2)} bits); {prolific.author} spans {prolific.genres} genres and{" "}
+          {specialist.reviews} reviews ({fixed(specialist.entropy, 2)} bits); {prolific.author} spans {prolific.genres} genres and{" "}
           {prolific.countries} countries across {prolific.reviews}. Chi-square tests against the archive-wide genre mix show
           significant deviations for most of the top 15.
         </p>
@@ -292,7 +305,7 @@ export default async function Home() {
               title="Genres a city over-indexes on (lift)"
               subtitle="Lift = genre's share of a city's features ÷ its share of the whole archive. Top 12 pairs."
             />
-            <LiftBars scenes={scenes} />
+            <LiftBars scenes={scenes} strongMin={STRONG_EVIDENCE} />
             <DataTable
               caption="City and genre lift"
               rows={scenes}
@@ -301,7 +314,7 @@ export default async function Home() {
                 { label: "Genre", value: (r) => r.genre },
                 { label: "Features", value: (r) => r.features, numeric: true },
                 { label: "City total", value: (r) => r.cityFeatures, numeric: true },
-                { label: "Lift", value: (r) => `${r.lift.toFixed(2)}×`, numeric: true },
+                { label: "Lift", value: (r) => `${fixed(r.lift, 2)}×`, numeric: true },
               ]}
             />
           </>
@@ -313,14 +326,21 @@ export default async function Home() {
           cities with 10+ tagged features and pairs with 3+.
         </p>
         <p>
-          Even then, evidence matters more than the ratio. The highest lift, {top.city} {top.genre.toLowerCase()} ({top.lift.toFixed(1)}×),
-          rests on just {top.features} records. {credible.city} {credible.genre.toLowerCase()} ({credible.features} of{" "}
-          {credible.cityFeatures} features) and {biggest.city} {biggest.genre.toLowerCase()} ({biggest.features} of {biggest.cityFeatures})
-          are the credible scenes.
+          Even then, evidence matters more than the ratio. The highest lift, {sceneName(top)} ({fixed(top.lift, 1)}×), rests on{" "}
+          {topIsThin
+            ? `just ${top.features} records.`
+            : `${top.features} of ${top.cityFeatures} features: over the bar, but a base that small moves several points with every new feature.`}{" "}
+          {best1 && best2 && (
+            <>
+              The best-evidenced scenes are {sceneName(best1)} ({best1.features} of {best1.cityFeatures} features) and{" "}
+              {sceneName(best2)} ({best2.features} of {best2.cityFeatures}).
+            </>
+          )}
         </p>
         <Caveat>
-          Several of music writing&apos;s favourite associations, like Bristol and trip-hop, don&apos;t clear the floor. That&apos;s not
-          because they&apos;re false; the archive just doesn&apos;t have enough features from those cities to test them.
+          Some of music writing&apos;s favourite associations can&apos;t be tested here at all. Trip-hop isn&apos;t one of Bandcamp&apos;s
+          genre tags, so Bristol&apos;s reputation has no column to show up in. Absence from this chart isn&apos;t evidence against a
+          scene.
         </Caveat>
       </Finding>
 

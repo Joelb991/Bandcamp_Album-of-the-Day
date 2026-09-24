@@ -2,6 +2,7 @@
 
 import { useState, type KeyboardEvent, type PointerEvent } from "react";
 import { linear, Tooltip, TipRow, TipTitle, useWidth } from "./shared";
+import { fixed } from "@/lib/format";
 
 export type LinePoint = { x: number; y: number; note?: string };
 
@@ -19,7 +20,7 @@ type Props = {
   height?: number;
 };
 
-const fmt = (v: number) => `${v.toFixed(1)}%`;
+const fmt = (v: number) => `${fixed(v, 1)}%`;
 
 export default function LineChart({
   data,
@@ -43,8 +44,10 @@ export default function LineChart({
   const everyOther = width < 520;
   const last = data.length - 1;
   // The end value sits right of its dot unless that would collide with the
-  // reference label in the same gutter - then it moves above the dot.
+  // reference label in the same gutter - then it moves to whichever side of
+  // the dot is away from the reference line.
   const endBesideDot = !reference || Math.abs(y(data[last].y) - y(reference.y)) > 16;
+  const endBelow = !!reference && data[last].y < reference.y;
 
   const nearest = (px: number) => {
     let best = 0;
@@ -131,7 +134,7 @@ export default function LineChart({
               {labelled && (
                 <text
                   x={i === last && endBesideDot ? x(p.x) + 9 : x(p.x)}
-                  y={i === last && endBesideDot ? y(p.y) : y(p.y) - 12}
+                  y={i === last && endBesideDot ? y(p.y) : i === last && endBelow ? y(p.y) + 20 : y(p.y) - 12}
                   dy={i === last && endBesideDot ? "0.32em" : undefined}
                   textAnchor={i === last && endBesideDot ? "start" : "middle"}
                   className="fill-ink text-[12px] font-semibold tnum"
