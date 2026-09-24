@@ -7,6 +7,8 @@ and writers.
 
 **2,287 articles · 2011–2026 · 80 countries · 343 contributors · 585 labels**
 
+**[View the interactive dashboard on Tableau Public →](https://public.tableau.com/views/bandcamp_aotd/Coverage)** — three tabs: Coverage (geography), Editorial (writers), Scenes (city × genre).
+
 ---
 
 ## The question
@@ -34,8 +36,8 @@ Three sub-questions the pipeline was built to answer:
 
 | Finding | Number |
 |---|---|
-| Features from US-based labels | **54.3%** |
-| Features from the top 3 countries combined | **73.5%** |
+| Features from US-based labels | **54.8%** |
+| Features from the top 3 countries combined | **74.9%** |
 | Features that are **self-released** | **66.2%** |
 | Share of all coverage written by the top 15 contributors | **29.5%** |
 | Most genre-specialised city (Pittsburgh / Metal) | **16× the archive average** |
