@@ -5,9 +5,16 @@ production-shaped ELT pipeline, a modelled Postgres warehouse, and an analysis
 of how editorial attention is actually distributed across genres, geographies
 and writers.
 
-**2,287 articles · 2011–2026 · 80 countries · 343 contributors · 585 labels**
+**2,287 articles · 2011–2026 · 80 countries · 343 contributors · 584 labels**
 
-**[View the interactive dashboard on Tableau Public →](https://public.tableau.com/views/bandcamp_aotd/Coverage)** — three tabs: Coverage (geography), Editorial (writers), Scenes (city × genre).
+- **Web app** — the findings, a searchable archive of every feature, and an interactive map. Next.js on Vercel, reading live from the warehouse. See [`app/`](app/).
+- **[Tableau dashboard →](https://public.tableau.com/views/bandcamp_aotd/Coverage)** — three tabs: Coverage (geography), Editorial (writers), Scenes (city × genre).
+
+![The web app: findings, cover-art archive and live warehouse numbers](assets/screenshots/app-overview.jpg)
+
+| | |
+|---|---|
+| ![Archive: search every feature](assets/screenshots/app-archive.jpg) | ![Map: coverage by label country](assets/screenshots/app-map.jpg) |
 
 ---
 
@@ -72,7 +79,7 @@ matter, is in [`docs/findings.md`](docs/findings.md).
                                               │ dim_label     │
                                               │ pipeline_run  │
                                               └───────┬───────┘
-                                                      │  6 analytics views
+                                                      │  8 analytics views
                                     ┌─────────────────┼─────────────────┐
                                     ▼                 ▼                 ▼
                               Tableau           Next.js app        Notebooks
@@ -156,6 +163,17 @@ Bandcamp publishes ~5 new features a week. A weekly refresh is enough:
 Each run writes a row to `pipeline_run`, and `vw_pipeline_health` exposes
 freshness and match rates for the dashboard's "data as of" badge.
 
+**The first refresh after a backfill needs a page limit.** Historic rows came
+from an export with no article URLs, so the crawler has nothing to recognise
+and would otherwise re-crawl the whole archive. Four index pages (120
+articles) covers a few months of new features:
+
+```bash
+python -m bandcamp_aotd refresh --max-pages 4
+```
+
+After that the warehouse holds URLs and every later refresh stops on its own.
+
 ---
 
 ## Repository layout
@@ -171,15 +189,16 @@ freshness and match rates for the dashboard's "data as of" badge.
 │   └── legacy.py            #   bridge from the original CSV exports
 ├── db/
 │   ├── schema.sql           # tables, indexes, constraints, audit trail
-│   └── views.sql            # the semantic layer (6 analytics views)
+│   ├── views.sql            # the semantic layer (8 analytics views)
+│   └── app_role.sql         # read-only role for the web app
 ├── notebooks/               # 01 collection → 06 geographic hubs
-├── tests/                   # 60 tests: parsing, cleaning, identity, transforms
+├── tests/                   # 94 tests: parsing, cleaning, identity, transforms, refresh
 ├── tools/build_notebooks.py # notebooks generated from reviewable Python
 ├── data/
 │   ├── raw/                 # original exports + HTML cache (git-ignored)
 │   └── processed/           # the analytics table (committed)
 ├── dashboards/tableau/      # Tableau workbook
-├── app/                     # Next.js web app (planned — see docs/roadmap.md)
+├── app/                     # Next.js web app on Vercel (see app/README.md)
 └── docs/                    # architecture, data dictionary, findings, roadmap
 ```
 
@@ -201,8 +220,8 @@ scheduled pipeline and the analysis run identical code.
 
 ## Engineering notes
 
-**Tested.** 60 tests cover the HTML parsers, the nine-step location cleaner,
-the identity hash and the transform pipeline. Every location test case is a
+**Tested.** 94 tests cover the HTML parsers, the nine-step location cleaner,
+the identity hash, the transform pipeline and the refresh path. Every location test case is a
 real value from the dataset that broke something.
 
 ```bash
@@ -219,19 +238,19 @@ handler that treated a 24-hour ban as a per-row error and burned through 1,592
 rows marking them all failed. Both are described in
 [`docs/architecture.md`](docs/architecture.md).
 
-**Known limitation.** The Spotify match rate currently sits at 23% because
-that enrichment run was interrupted by the rate limit above. Re-running
-`python -m bandcamp_aotd enrich` resumes from the checkpoint. The pacing is now
-gentler by default (~3 req/s), which completes the full dataset in about 13
-minutes.
+**Resumable.** After that ban, a re-run of `python -m bandcamp_aotd enrich`
+picked up from the checkpoint and retried only the failed rows. Every row now
+has a definitive status: 79.6% matched on Spotify, 20.4% not found (a lower
+bound on availability; see the
+[data dictionary](docs/data_dictionary.md#about-that-20)).
 
 ---
 
 ## Tech stack
 
-**Python** (pandas, requests) · **PostgreSQL / Supabase** · **SQL**
+**Python** (pandas, requests, scipy) · **PostgreSQL / Supabase** · **SQL**
 (window functions, CTEs, `ON CONFLICT` upserts) · **Tableau** ·
-**pytest** · **Spotify Web API**
+**Next.js / TypeScript / Vercel** · **pytest** · **Spotify Web API**
 
 ## Data & ethics
 

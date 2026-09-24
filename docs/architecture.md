@@ -134,7 +134,7 @@ definition.
 
 ---
 
-## 4. Two bugs worth documenting
+## 4. Bugs worth documenting
 
 Both were found by testing against a real Postgres rather than by reading the
 code. Both are the kind that produce *plausible wrong numbers* rather than
@@ -179,6 +179,30 @@ A long rate limit is a **run-level** condition, not a row-level one. It now
 raises `SpotifyRateLimitError`, which is deliberately not caught per row: the
 checkpoint is flushed, the run stops, and re-running after the cooldown resumes
 correctly. Default pacing dropped from ~10 req/s to ~3 req/s.
+
+### And two in the refresh path
+
+Both were found by reading what `refresh` would do to a repo that already
+held the backfilled archive, before it was ever run against one.
+
+**The Spotify checkpoint was keyed by row position.** The legacy enrichment
+left positions 0–2,287 in it. A fresh scrape numbers its rows 0..n, so every
+new article looked already enriched and silently received the Spotify match of
+whichever legacy album had held that position — no API call, no error. The
+checkpoint is now keyed on the album itself (`album_key`: normalised artist +
+album), which is the only thing a lookup depends on. Position-keyed entries
+are ignored, resume no longer depends on row order, and an album featured
+twice is looked up once.
+
+**`transform` replaced the analytics CSV with the new rows alone.** A refresh
+scrapes only new articles, so the committed 2,287-row table — the one the
+notebooks and the Tableau extract read — would have shrunk to a week's worth.
+The warehouse was fine (the load is an upsert), which is exactly why it would
+have gone unnoticed. New rows are now merged in on `article_id`, the same rule
+as the database's `ON CONFLICT DO UPDATE`; `--replace` rebuilds on purpose.
+
+`tests/test_refresh.py` pins both, including a checkpoint in the old
+position-keyed format.
 
 ---
 

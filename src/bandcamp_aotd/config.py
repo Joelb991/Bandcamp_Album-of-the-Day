@@ -27,8 +27,6 @@ EXPORTS_DIR = DATA_DIR / "exports"
 HTML_CACHE_DIR = RAW_DIR / "html_cache"
 
 DB_DIR = PROJECT_ROOT / "db"
-REPORTS_DIR = PROJECT_ROOT / "reports"
-FIGURES_DIR = REPORTS_DIR / "figures"
 
 # ── Canonical file names ────────────────────────────────────────────────────
 LEGACY_ARTICLES_CSV = PROCESSED_DIR / "aotd_articles.csv"
@@ -96,6 +94,5 @@ DATABASE = DatabaseConfig()
 
 def ensure_directories() -> None:
     """Create every directory the pipeline writes to. Safe to call repeatedly."""
-    for path in (RAW_DIR, INTERIM_DIR, PROCESSED_DIR, EXPORTS_DIR,
-                 HTML_CACHE_DIR, FIGURES_DIR):
+    for path in (RAW_DIR, INTERIM_DIR, PROCESSED_DIR, EXPORTS_DIR, HTML_CACHE_DIR):
         path.mkdir(parents=True, exist_ok=True)

@@ -91,35 +91,35 @@ Three parsing rules are worth knowing before you count anything:
 | Column | Type | Null | Description |
 |---|---|---|---|
 | `spotify_match_status` | text | 0% | `matched` · `no_match` · `error: …`. **Filter on this before trusting any column below.** |
-| `spotify_id` | text | 77% | Spotify album ID |
-| `spotify_url` | text | 77% | Public album link |
-| `spotify_artist_id` | text | 77% | Spotify artist ID |
-| `spotify_match_artist` | text | 77% | Artist name **as Spotify has it** — compare against `artist` to catch false positives |
-| `spotify_match_album` | text | 77% | Album name as Spotify has it |
-| `spotify_release_date` | text | 77% | ISO date; precision varies |
-| `spotify_release_date_precision` | text | 77% | `day` or `year` |
-| `spotify_album_type` | text | 77% | `album` · `single` · `compilation` |
-| `spotify_total_tracks` | int | 77% | Track count |
-| `spotify_image_url` | text | 77% | Cover art |
+| `spotify_id` | text | 20% | Spotify album ID |
+| `spotify_url` | text | 20% | Public album link |
+| `spotify_artist_id` | text | 20% | Spotify artist ID |
+| `spotify_match_artist` | text | 20% | Artist name **as Spotify has it** — compare against `artist` to catch false positives |
+| `spotify_match_album` | text | 20% | Album name as Spotify has it |
+| `spotify_release_date` | text | 20% | ISO date; precision varies |
+| `spotify_release_date_precision` | text | 20% | `day` or `year` |
+| `spotify_album_type` | text | 20% | `album` · `single` · `compilation` |
+| `spotify_total_tracks` | int | 20% | Track count |
+| `spotify_image_url` | text | 20% | Cover art |
 | `spotify_upc` / `spotify_ean` / `spotify_copyright` | text | 100% | Require `full_details=True` (a second API call per row). Not currently populated. |
-| `spotify_artist_status` | text | 77% | `matched` · `no_id` · `error: …` |
-| `spotify_artist_image_url` | text | 77% | Artist photo |
-| `spotify_artist_url` | text | 77% | Artist profile link |
+| `spotify_artist_status` | text | 20% | `matched` · `no_id` · `error: …` |
+| `spotify_artist_image_url` | text | 20% | Artist photo |
+| `spotify_artist_url` | text | 20% | Artist profile link |
 
-### About that 77%
+### About that 20%
 
-Two separate causes, and they mean different things:
+467 features (20.4%) have no Spotify match. That can mean two different
+things, and the data cannot tell them apart:
 
-1. **Genuine absence.** Plenty of Bandcamp Daily picks are not on Spotify —
-   which is much of the point of Bandcamp. 169 rows are confirmed `no_match`.
-   This is a finding, not a gap.
-2. **An interrupted run.** 1,592 rows carry an `error:` status from a run that
-   hit a 24-hour Spotify rate limit. Re-running
-   `python -m bandcamp_aotd enrich` resumes from the checkpoint and retries
-   exactly those rows.
+1. **Genuine absence.** Plenty of Bandcamp Daily picks are not on Spotify,
+   which is much of the point of Bandcamp.
+2. **A name mismatch.** Matching is on artist and album title, so a
+   re-titled or differently transliterated release can be missed.
 
-Only 527 rows are confirmed matched today. **Do not report a "23% Spotify
-availability" figure** — the denominator is contaminated by the failed run.
+So 79.6% is a lower bound on Spotify availability, not a census. Every row
+now carries a definitive `matched` or `no_match` status; the rows that once
+held `error:` statuses from a rate-limited run were retried from the
+checkpoint and resolved.
 
 ### Deliberately omitted
 

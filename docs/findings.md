@@ -19,23 +19,33 @@ More than half of everything featured comes from a US-based label.
 | Remaining 77 countries combined | **25.1%** |
 
 The static number undersells the more interesting result. **The US share has
-fallen steadily since 2018:**
+fallen about 19 points from its 2017 peak, and most of that fall came in two
+years:**
 
 | Year | US share |
 |---|---|
-| 2017 | 60.3% |
-| 2019 | 50.5% |
-| 2022 | 54.5% |
-| 2024 | 47.6% |
-| 2025 | **43.0%** |
-| 2026 (partial) | **41.8%** |
+| 2017 | **63.1%** (peak) |
+| 2019 | 53.3% |
+| 2021 | 56.7% |
+| 2023 | 61.3% |
+| 2024 | 49.1% |
+| 2025 | **44.2%** |
+| 2026 (to May) | 43.2% |
 
-That is roughly a **17-point decline from the 2017 peak** — a section that has
-genuinely broadened its geographic reach, not one that talks about doing so.
-For anyone building an editorial or curation strategy, this is the finding with
-the clearest read-across: international coverage grew without the total volume
-changing (~230 features a year since 2017), meaning it was a reallocation of
-attention, not an expansion of it.
+From 2018 to 2023 the share wandered between 53% and 61% with no clear
+direction. Then it broke: down 12 points in 2024 and another 5 in 2025. That
+is a step change, not drift, and a section that genuinely broadened its
+geographic reach rather than one that talks about doing so. Total volume did
+not change (~230 features a year since 2017), so international coverage grew
+by reallocating attention, not by adding more of it.
+
+**It isn't a change of writers.** 73% of features since 2024 were written by
+people already writing for the section in 2018–23, and those same 53 writers'
+US share fell from 53.6% to 45.8% (χ² p = 0.02). Writers new since 2024 sit at
+a similar 46.9%. The shift happened *within* the existing roster, which points
+to commissioning or submissions rather than personnel. The timing coincides
+with Bandcamp's sale to Songtradr in late 2023, after which roughly half the
+company's staff were let go, but this dataset can't establish cause.
 
 **The caveat that limits this.** These are *label* locations, not artist
 locations. Bandcamp's own catalogue composition is not public, so there is no
@@ -55,7 +65,7 @@ This is the number that most contradicts how music discovery is usually
 described. The section's editorial centre of gravity is not small labels; it is
 artists with no label at all.
 
-By country, among those with 20+ features, the spread is wide: Canada (74.8%)
+By country, among those with 30+ features, the spread is wide: Canada (74.8%)
 and Australia (74.6%) run well above average, while Germany (41.8%) and France
 (42.3%) run well below — suggesting genuinely different independent-music
 infrastructures rather than different editorial treatment.
@@ -84,7 +94,7 @@ one genre; ~4.6 = perfectly even across 25 tags):
 | John Morrison | 110 | 15 | **3.15** |
 
 The range is the point. Dash Lewis writes in effectively one genre; John
-Morrison spans fifteen across fourteen countries. Chi-square tests against the
+Morrison spans fifteen across twelve countries. Chi-square tests against the
 archive-wide genre distribution return significant deviations for most of the
 top 15 — these are real specialisms, not sampling noise.
 
@@ -169,10 +179,12 @@ In rough order of value per unit of effort:
    catalogue by country would turn "54% US" from a description into a claim
    about editorial preference.
 
-3. **Complete the Spotify enrichment.** At 527 confirmed matches the
-   availability rate is not reportable. A full pass makes "what fraction of
-   independent music Bandcamp features is even on Spotify?" answerable — a
-   question a streaming or catalogue team would find directly useful.
+3. **Separate "not on Spotify" from "not matched".** Enrichment is complete:
+   79.6% of features match a Spotify album. The remaining 20.4% mixes genuine
+   absence with title mismatches; a fuzzy second pass (or a check against
+   Bandcamp's own links) would turn 79.6% from a lower bound into an
+   availability rate, which is the number a streaming or catalogue team would
+   actually want.
 
 4. **Geocode `dim_place`.** The columns exist. It moves the map from
    country choropleth to city-level points and makes §4 visual.

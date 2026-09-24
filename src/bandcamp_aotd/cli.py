@@ -52,6 +52,9 @@ def cmd_scrape(args) -> int:
         if not known:
             logger.info("No known URLs available - this run will be a full crawl.")
 
+    # This run's output replaces the last one; if nothing is new there should
+    # be no file at all, or refresh would re-process last week's scrape.
+    INTERIM_SCRAPE.unlink(missing_ok=True)
     df = scrape_articles(known_urls=known, max_pages=args.max_pages,
                          use_cache=not args.no_cache)
     if df.empty:
@@ -72,11 +75,9 @@ def cmd_enrich(args) -> int:
     * a fresh scrape, which already uses snake_case ``artist`` / ``album``
     * a legacy export, which uses ``Artist`` / ``Album`` (pass ``--legacy``)
 
-    ``--legacy`` matters for more than column names. Resume works by
-    DataFrame index, so the rows have to arrive in the same order they did on
-    the run being resumed. Reading the legacy CSV through ``load_legacy_csv``
-    renames columns without reordering or dropping anything, which keeps the
-    existing checkpoint aligned.
+    The Spotify checkpoint is keyed on artist and album (``album_key``), so a
+    re-run resumes correctly whatever order the rows arrive in, and a fresh
+    scrape never inherits results meant for other rows.
     """
     from .enrich.spotify import SpotifyClient, SpotifyRunAborted
     from .legacy import load_legacy_csv
@@ -153,8 +154,15 @@ def cmd_enrich(args) -> int:
 
 
 def cmd_transform(args) -> int:
+    """Build analytics rows from the last scrape and merge them into the table.
+
+    The scrape only holds new articles, so by default they are merged into the
+    existing analytics CSV on ``article_id`` rather than replacing it - the CSV
+    is what the notebooks and the Tableau extract read. ``--replace`` writes the
+    input alone (a deliberate full rebuild); ``--output`` writes elsewhere.
+    """
     from .load import write_csv
-    from .transform import build_analytics_table
+    from .transform import build_analytics_table, merge_analytics
 
     source = Path(args.input) if args.input else (
         INTERIM_ENRICHED if INTERIM_ENRICHED.exists() else INTERIM_SCRAPE
@@ -165,7 +173,10 @@ def cmd_transform(args) -> int:
 
     df = pd.read_csv(source)
     analytics = build_analytics_table(df)
-    write_csv(analytics, args.output)
+    target = Path(args.output) if args.output else config.ANALYTICS_CSV
+    if not args.output and not args.replace and target.exists():
+        analytics = merge_analytics(pd.read_csv(target), analytics)
+    write_csv(analytics, target)
     return 0
 
 
@@ -232,15 +243,21 @@ def cmd_refresh(args) -> int:
         logger.info("Nothing new - refresh finished early.")
         return 0
 
+    enriched = False
     if config.SPOTIFY.configured and not args.skip_enrich:
         logger.info("=== refresh: enrich ===")
         args.input = None
-        cmd_enrich(args)
+        enriched = cmd_enrich(args) == 0
+        if not enriched:
+            logger.warning("Enrichment failed - loading the new articles without Spotify "
+                           "data. Re-run `enrich`, `transform` and `load` to fill it in.")
     else:
         logger.info("Skipping Spotify enrichment.")
 
     logger.info("=== refresh: transform ===")
-    args.input = None
+    # Name the input explicitly: an enriched file left over from an earlier
+    # run must never stand in for this run's scrape.
+    args.input = str(INTERIM_ENRICHED if enriched else INTERIM_SCRAPE)
     args.output = None
     if cmd_transform(args) != 0:
         return 1
@@ -283,6 +300,8 @@ def build_parser() -> argparse.ArgumentParser:
     transform = subparsers.add_parser("transform", help="build the analytics table")
     transform.add_argument("--input", help="CSV to transform")
     transform.add_argument("--output", help="where to write the analytics table")
+    transform.add_argument("--replace", action="store_true",
+                           help="overwrite the analytics table instead of merging into it")
     transform.set_defaults(func=cmd_transform)
 
     load = subparsers.add_parser("load", help="upsert the analytics table into Postgres")
@@ -310,7 +329,7 @@ def build_parser() -> argparse.ArgumentParser:
     # so legacy is False here — but it must be *set*, or cmd_enrich raises
     # AttributeError when refresh delegates to it.
     refresh.set_defaults(func=cmd_refresh, input=None, output=None,
-                         legacy=False, max_calls=None, views=False)
+                         legacy=False, max_calls=None, views=False, replace=False)
 
     return parser
 

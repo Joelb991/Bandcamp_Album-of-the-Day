@@ -30,7 +30,7 @@ __all__ = [
     "add_location_features", "clean_location", "split_location",
     "is_country", "normalize_country",
     "normalize_text", "normalize_text_columns", "add_label_features",
-    "build_analytics_table", "ANALYTICS_COLUMNS",
+    "build_analytics_table", "merge_analytics", "ANALYTICS_COLUMNS",
 ]
 
 # The canonical column order of the analytics table. Anything not listed here
@@ -111,3 +111,28 @@ def build_analytics_table(df: pd.DataFrame) -> pd.DataFrame:
         out["genre_tag"].nunique(),
     )
     return out
+
+
+def merge_analytics(existing: pd.DataFrame, new: pd.DataFrame) -> pd.DataFrame:
+    """Upsert freshly transformed rows into an existing analytics table.
+
+    A refresh transforms only the articles it just scraped. Writing that on
+    its own would replace the whole archive with one week of rows, so new rows
+    are merged in on ``article_id`` instead: a new article is added, and a
+    re-scraped one replaces its old row (it may now carry a URL). The same
+    rule as the warehouse's ON CONFLICT DO UPDATE.
+    """
+    def iso_dates(frame: pd.DataFrame) -> pd.DataFrame:
+        # build_analytics_table yields date objects; a table read from CSV has
+        # strings. One representation, or the sort below can't compare them.
+        dates = pd.to_datetime(frame["published_date"]).dt.strftime("%Y-%m-%d")
+        return frame[ANALYTICS_COLUMNS].assign(published_date=dates)
+
+    combined = pd.concat([iso_dates(existing), iso_dates(new)], ignore_index=True)
+    combined = combined.drop_duplicates(subset="article_id", keep="last")
+    # Stable, so existing rows keep their order and the file diffs cleanly.
+    combined = combined.sort_values("published_date", kind="stable").reset_index(drop=True)
+    added = len(combined) - len(existing)
+    logger.info("Merged %d new row(s) into the analytics table (%d updated in place)",
+                added, len(new) - added)
+    return combined

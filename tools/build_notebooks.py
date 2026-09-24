@@ -611,10 +611,10 @@ quality.sort_values("null_pct", ascending=False).head(15)"""),
   exported before URLs were captured. That's exactly why the warehouse keys on
   a content hash rather than the URL — see
   `src/bandcamp_aotd/transform/identity.py`.
-- **The Spotify match rate is well below 100%.** Partly genuine (many Bandcamp
-  picks aren't on Spotify at all — which is rather the point of Bandcamp), and
-  partly an interrupted enrichment run that hit a 24-hour rate limit. Re-running
-  `python -m bandcamp_aotd enrich` resumes it.
+- **About a fifth of features have no Spotify match.** Partly genuine (many
+  Bandcamp picks aren't on Spotify at all — which is rather the point of
+  Bandcamp), partly title mismatches. Treat the match rate as a lower bound on
+  availability.
 - **~3.5% of rows have no location.** The label never filled in the field.
   Nothing to recover; just report it."""),
 
@@ -1127,7 +1127,45 @@ ax.set_ylim(0, 1)
 ax.legend()
 ax.spines[["top", "right"]].set_visible(False)
 plt.tight_layout()
-plt.show()"""),
+plt.show()
+
+us_share.round(3)"""),
+
+    md("""### Was 2024 a change of writers?
+
+The share sat between 53% and 61% from 2018 to 2023, then fell 12 points in a
+single year. A step like that invites the obvious explanation: different
+people started writing. If so, writers active both before and after 2024
+should look the same as they always did, and the drop should come from
+newcomers. Test it directly."""),
+
+    code("""from scipy.stats import chi2_contingency
+
+before = located[located["year"].between(2018, 2023)]
+after = located[located["year"] >= 2024]
+continuing = set(before["author"].dropna()) & set(after["author"].dropna())
+
+since_2024 = df[df["year"] >= 2024]
+print(f"{since_2024['author'].isin(continuing).mean():.0%} of features since 2024 "
+      f"were written by the {len(continuing)} writers also active in 2018-23")
+
+b = before[before["author"].isin(continuing)]["country"].eq("United States")
+a = after[after["author"].isin(continuing)]["country"].eq("United States")
+newcomers = after[~after["author"].isin(continuing)]["country"].eq("United States")
+
+print(f"Continuing writers, US share 2018-23: {b.mean():.1%}  (n={len(b)})")
+print(f"Continuing writers, US share 2024+:   {a.mean():.1%}  (n={len(a)})")
+print(f"Newer writers,      US share 2024+:   {newcomers.mean():.1%}  (n={len(newcomers)})")
+
+table = [[b.sum(), (~b).sum()], [a.sum(), (~a).sum()]]
+chi2, p, _, _ = chi2_contingency(table)
+print(f"\\nChi-square, continuing writers before vs after: chi2={chi2:.2f}, p={p:.3f}")"""),
+
+    md("""The same writers moved. Their US share fell by about eight points, and the
+change is unlikely to be noise; newer writers sit at a similar level. The
+shift happened *within* the existing roster, which points to commissioning or
+submissions rather than personnel. The timing coincides with Bandcamp's sale
+to Songtradr in late 2023, but observational data can't establish cause."""),
 
     md("""## 2. Which cities are specialised?
 
@@ -1251,10 +1289,13 @@ ax.spines[["top", "right"]].set_visible(False)
 plt.tight_layout()
 plt.show()"""),
 
-    md("""## 4. Export for the choropleth
+    md("""## 4. The choropleth aggregate
 
-Tableau draws the map. This writes the country-level aggregate it reads,
-mirroring the `vw_coverage_by_country` view so the file and the database agree."""),
+Tableau and the web app draw the map from `vw_coverage_by_country`. This
+recomputes the same aggregate in pandas as a cross-check that the view and the
+analysis agree. It deliberately writes nothing: the file Tableau reads,
+`data/exports/coverage_by_country.csv`, has one producer
+(`python -m bandcamp_aotd export --views`), so it always matches the view."""),
 
     code("""choropleth = (
     located.groupby("country")
@@ -1270,12 +1311,9 @@ mirroring the `vw_coverage_by_country` view so the file and the database agree."
     .reset_index()
     .sort_values("features", ascending=False)
 )
-choropleth["pct_of_all"] = (choropleth["features"] / choropleth["features"].sum() * 100).round(2)
+choropleth["pct_of_all_features"] = (choropleth["features"] / choropleth["features"].sum() * 100).round(2)
 
-config.ensure_directories()
-out = config.EXPORTS_DIR / "coverage_by_country.csv"
-choropleth.to_csv(out, index=False)
-print(f"Wrote {len(choropleth)} countries to {out}")
+print(f"{len(choropleth)} countries")
 choropleth.head(10)"""),
 
     md("""## Findings
