@@ -48,8 +48,16 @@ npm run dev                    # http://localhost:3000
    psql "$DATABASE_URL" -v app_password='choose-a-long-password' -f db/app_role.sql
    ```
 
-   The app's connection string is then the pooler URI with the user
-   `aotd_app.<project-ref>` and that password.
+   The app's connection string is then the **session pooler** URI (port
+   **5432**) with the user `aotd_app.<project-ref>` and that password:
+
+   ```
+   postgresql://aotd_app.<project-ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres
+   ```
+
+   Not the transaction pooler on 6543: `next build` runs 10 workers that
+   pipeline queries, and through that pooler pages stall past the 60-second
+   limit.
 
 2. **Import the repo** at [vercel.com/new](https://vercel.com/new) and set
    **Root Directory** to `app`. The framework is detected automatically.
