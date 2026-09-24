@@ -387,8 +387,9 @@ enriched.head(3)"""),
 NB_03 = [
     md("""# 03 - Data Cleaning and Geography
 
-**Input:** scraped + enriched articles
-**Output:** the analytics table -> `data/processed/aotd_analytics.csv`
+**Input:** the original archive export (`data/processed/aotd_articles_enriched.csv`)
+**Output:** none - this notebook explains and checks the cleaning. The analytics
+table is owned by the pipeline (see the last section).
 
 This is where the messiest column in the dataset gets fixed.
 
@@ -398,8 +399,9 @@ expect and several you wouldn't. Left alone it produces **422 distinct
 "locations"** — many of which are the same place spelled differently — and it
 is unusable for a map.
 
-After cleaning: **407 distinct locations, 82 countries, and zero unresolved
-values.**"""),
+After cleaning: **407 distinct locations, 80 countries, and zero unresolved
+values.** (Those are the original export's numbers; each refresh adds a few
+more raw spellings for the same rules to absorb.)"""),
 
     code(BOOTSTRAP),
 
@@ -543,19 +545,36 @@ This should print nothing. When it doesn't, the value goes into `ALIASES` or
 ].value_counts()
 print(missing if len(missing) else "All locations resolved to a country.")"""),
 
-    md("""## Save and load
+    md("""## How the table reaches the warehouse
 
-The CSV is the portable copy — the repo clones and runs with no credentials.
-Postgres is the source of truth for the dashboard and the app.
+This notebook rebuilds the archive from the original export to show the
+cleaning at work. It deliberately **writes nothing**:
+`data/processed/aotd_analytics.csv` has one owner, the pipeline.
 
 ```bash
-python -m bandcamp_aotd transform
-python -m bandcamp_aotd load
-```"""),
+python -m bandcamp_aotd backfill   # once: load the original export
+python -m bandcamp_aotd refresh    # weekly: new articles, merged in on article_id
+```
 
-    code("""from bandcamp_aotd.load import write_csv
+An earlier version of this notebook ended with `write_csv(analytics)`. That
+replaced the pipeline's table with the rows rebuilt here, silently dropping
+every article a refresh had added since. Instead, the cell below checks that
+the two agree."""),
 
-write_csv(analytics)"""),
+    code("""committed = pd.read_csv(config.ANALYTICS_CSV)
+in_committed = analytics["article_id"].isin(committed["article_id"])
+added_since = ~committed["article_id"].isin(analytics["article_id"])
+
+print(f"Rebuilt here from the export : {len(analytics):,} articles")
+print(f"Pipeline's analytics table   : {len(committed):,} articles, "
+      f"latest {committed['published_date'].max()}")
+print(f"Rebuilt rows found in it     : {in_committed.sum():,}")
+print(f"Added by refreshes since     : {added_since.sum():,}")
+analytics.loc[~in_committed, ["published_date", "artist", "album"]]"""),
+
+    md("""Any rebuilt row missing from the pipeline's table was corrected by a later
+scrape. Bandcamp sometimes fixes a headline after publication; a corrected
+artist name changes the `article_id`, so the refresh replaces the old row."""),
 
     md("""## Next
 
@@ -716,7 +735,7 @@ print(f"{indie_overall:.1%} of all Album of the Day features are self-released."
 
     md("""## Geography
 
-54% of everything featured comes from the United States. Whether that's a bias
+More than half of everything featured comes from US-based labels. Whether that's a bias
 or simply reflects where Bandcamp's userbase is, is the question notebook 06
 takes up."""),
 
@@ -1161,8 +1180,8 @@ table = [[b.sum(), (~b).sum()], [a.sum(), (~a).sum()]]
 chi2, p, _, _ = chi2_contingency(table)
 print(f"\\nChi-square, continuing writers before vs after: chi2={chi2:.2f}, p={p:.3f}")"""),
 
-    md("""The same writers moved. Their US share fell by about eight points, and the
-change is unlikely to be noise; newer writers sit at a similar level. The
+    md("""The same writers moved. Their US share fell by several points (above), and
+the chi-square test says the change is unlikely to be noise. The
 shift happened *within* the existing roster, which points to commissioning or
 submissions rather than personnel. The timing coincides with Bandcamp's sale
 to Songtradr in late 2023, but observational data can't establish cause."""),
