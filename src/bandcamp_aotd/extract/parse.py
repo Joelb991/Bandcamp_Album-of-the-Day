@@ -151,19 +151,25 @@ def split_artist_album(title: str | None) -> tuple[str | None, str | None]:
 
 
 def resolve_label_and_artist(
-    artist: str | None, album: str | None, label: str | None
+    artist: str | None,
+    album: str | None,
+    label: str | None,
+    headline_had_comma: bool = False,
 ) -> tuple[str | None, str | None]:
     """Apply the two business rules that disambiguate artist from label.
 
     1. When the headline had no comma, ``artist == album``; the sidebar's
-       label field is actually the artist's name, so promote it.
+       label field is actually the artist's name, so promote it. A
+       self-titled record *with* a comma ("Lero Lero, Lero Lero") also has
+       ``artist == album``, but its artist is already right - promoting the
+       label there would credit the record to the label.
     2. When the resulting artist and the label are the same entity, the record
        is self-released - store it as ``Independent Artist``.
 
     Rule 2 is the origin of the ``is_independent`` dimension, which turns out
     to be the most interesting cut in the whole dataset.
     """
-    if artist and album and artist == album and label:
+    if artist and album and artist == album and label and not headline_had_comma:
         artist = label
     if artist and label and artist == label:
         label = INDEPENDENT_LABEL
@@ -178,7 +184,9 @@ def parse_article(page_html: str, url: str) -> dict:
     title = parse_title(page_html)
     label = parse_record_label(page_html)
     artist, album = split_artist_album(title)
-    artist, label = resolve_label_and_artist(artist, album, label)
+    artist, label = resolve_label_and_artist(
+        artist, album, label, headline_had_comma=bool(title) and "," in title
+    )
 
     record = {
         "article_url": url,
