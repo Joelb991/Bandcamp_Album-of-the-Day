@@ -7,7 +7,7 @@
 | ✓ | Pipeline: extract → transform → enrich → load, idempotent and resumable | [`src/bandcamp_aotd/`](../src/bandcamp_aotd/) |
 | ✓ | Postgres warehouse on Supabase with an audit trail | [`db/schema.sql`](../db/schema.sql) |
 | ✓ | Semantic layer: 8 views shared by every surface | [`db/views.sql`](../db/views.sql) |
-| ✓ | Spotify enrichment: every row resolved, 79.6% matched | [data dictionary](data_dictionary.md#about-that-20) |
+| ✓ | Spotify enrichment: every row resolved, 79.4% matched | [data dictionary](data_dictionary.md#why-a-fifth-of-features-have-no-match) |
 | ✓ | Six analysis notebooks | [`notebooks/`](../notebooks/) |
 | ✓ | Tableau dashboard: Coverage, Editorial, Scenes | [Tableau Public](https://public.tableau.com/views/bandcamp_aotd/Coverage) · [`dashboards/`](../dashboards/) |
 | ✓ | Web app: findings, searchable archive, interactive map, methodology | [`app/`](../app/) |
@@ -42,13 +42,13 @@ but can't yet reach: *do labels sign locally?*
 ### 3. Geocode `dim_place` — *2 hours*
 
 `latitude` and `longitude` already exist in the schema. Nominatim via `geopy`,
-one call per *place* (407), not per row, cached. That moves the map from
+one call per *place* (415), not per row, cached. That moves the map from
 countries to city-level points and makes the city/genre lift visual.
 
 ### 4. Separate "not on Spotify" from "not matched" — *half a day*
 
-The 20.4% without a match mixes genuine absence with title mismatches. A fuzzy
-second pass would turn 79.6% from a lower bound into an availability rate:
+The 20.6% without a match mixes genuine absence with title mismatches. A fuzzy
+second pass would turn 79.4% from a lower bound into an availability rate:
 *what fraction of the independent music Bandcamp champions is on the dominant
 streaming service at all?*
 

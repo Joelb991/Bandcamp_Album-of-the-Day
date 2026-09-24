@@ -5,7 +5,7 @@ production-shaped ELT pipeline, a modelled Postgres warehouse, and an analysis
 of how editorial attention is actually distributed across genres, geographies
 and writers.
 
-**2,287 articles · 2011–2026 · 80 countries · 343 contributors · 584 labels**
+**2,368 articles · 2011–2026 · 80 countries · 349 contributors · 600 labels**
 
 - **Web app** — the findings, a searchable archive of every feature, and an interactive map. Next.js on Vercel, reading live from the warehouse. See [`app/`](app/).
 - **[Tableau dashboard →](https://public.tableau.com/views/bandcamp_aotd/Coverage)** — three tabs: Coverage (geography), Editorial (writers), Scenes (city × genre).
@@ -45,9 +45,9 @@ Three sub-questions the pipeline was built to answer:
 |---|---|
 | Features from US-based labels | **54.8%** |
 | Features from the top 3 countries combined | **74.9%** |
-| Features that are **self-released** | **66.2%** |
-| Share of all coverage written by the top 15 contributors | **29.5%** |
-| Most genre-specialised city (Pittsburgh / Metal) | **16× the archive average** |
+| Features that are **self-released** | **66.3%** |
+| Share of all coverage written by the top 15 contributors | **29.0%** |
+| Most credible city scene (Pittsburgh / Metal: 12 of 15 features) | **14× the archive average** |
 
 Coverage is far more concentrated than "global independent music" suggests —
 geographically, and in who writes it. The full analysis, with the caveats that
@@ -240,9 +240,9 @@ rows marking them all failed. Both are described in
 
 **Resumable.** After that ban, a re-run of `python -m bandcamp_aotd enrich`
 picked up from the checkpoint and retried only the failed rows. Every row now
-has a definitive status: 79.6% matched on Spotify, 20.4% not found (a lower
+has a definitive status: 79.4% matched on Spotify, 20.6% not found (a lower
 bound on availability; see the
-[data dictionary](docs/data_dictionary.md#about-that-20)).
+[data dictionary](docs/data_dictionary.md#why-a-fifth-of-features-have-no-match)).
 
 ---
 

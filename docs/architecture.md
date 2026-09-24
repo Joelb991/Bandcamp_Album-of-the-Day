@@ -66,7 +66,7 @@ CSV and a fresh scrape resolve to the same key.
 #### The location cleaner is the interesting part
 
 `label_location_raw` is free text a label owner typed into their own Bandcamp
-profile. 422 distinct values, containing:
+profile. 430 distinct values as of September 2026, containing:
 
 - whitespace before commas (`"Osaka , Japan"`)
 - CJK placenames (`"東京都, Japan"`)
@@ -76,8 +76,8 @@ profile. 422 distinct values, containing:
 - accent-only duplicates (`"Bogota"` vs `"Bogotá"`)
 - ambiguous regional codes (`"Kzn, South Africa"`, `"Ib, Spain"`)
 
-Nine ordered steps reduce that to 407 values covering 82 countries with **zero
-unresolved**. Order is load-bearing in two places:
+Nine ordered steps reduce that to 415 values covering 80 countries with **zero
+unresolved**, including the new spellings each refresh brings in. Order is load-bearing in two places:
 
 **The Turkish İ must be replaced before title-casing.** Python decomposes
 U+0130 under `str.title()` into `I` plus a combining dot. The result compares
@@ -113,8 +113,8 @@ Every run writes to `pipeline_run`, including failures. Without that table,
 
 ## 3. Data model
 
-The grain is **one row per published article** — 2,287 rows growing by ~5 a
-week. That is small, so this is a wide fact table with conformed dimensions
+The grain is **one row per published article** — 2,368 rows (September 2026),
+growing by ~5 a week. That is small, so this is a wide fact table with conformed dimensions
 rather than a strict star. The joins a full star would buy are not worth the
 load complexity at this size, and both Tableau extracts and the web app want
 the flat shape anyway.
@@ -210,7 +210,7 @@ position-keyed format.
 
 **No dbt.** The transformation logic is Python-heavy — Unicode normalisation,
 ordered string cleaning, a hash key. dbt would mean either reimplementing that
-in SQL badly, or wrapping Python models around it for no gain at 2,287 rows.
+in SQL badly, or wrapping Python models around it for no gain at ~2,400 rows.
 
 **No Airflow.** One weekly job with four stages is a cron line. Airflow would
 be infrastructure to maintain in exchange for a UI.
