@@ -22,7 +22,7 @@ const STAGES = [
   {
     name: "Transform",
     path: "src/bandcamp_aotd/transform",
-    body: "A nine-step cleaner turns 422 raw location strings into 407 places across 80 countries. Calendar fields are derived, and each article gets a SHA-1 content-hash key.",
+    body: "A nine-step cleaner turns free-text label locations into {places} places across {countries} countries, with none left unresolved. Calendar fields are derived, and each article gets a SHA-1 content-hash key.",
   },
   {
     name: "Enrich",
@@ -115,7 +115,9 @@ export default async function Methodology() {
             <li key={s.name} className="relative rounded-xl border border-line bg-surface p-5">
               <p className="text-xs text-muted tnum">0{i + 1}</p>
               <h3 className="mt-1 font-semibold text-ink">{s.name}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-ink-2">{s.body}</p>
+              <p className="mt-2 text-sm leading-relaxed text-ink-2">
+                {s.body.replace("{places}", fmtInt(h.places)).replace("{countries}", fmtInt(h.countries))}
+              </p>
               <a href={`${REPO_URL}/tree/main/${s.path}`} target="_blank" rel="noreferrer" className="mt-3 inline-block font-mono text-[11px] text-accent hover:underline">
                 {s.path.replace("src/bandcamp_aotd/", "")}/
               </a>

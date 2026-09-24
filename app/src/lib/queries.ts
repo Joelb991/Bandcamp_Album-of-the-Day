@@ -33,6 +33,7 @@ export const getHealth = cache(async (): Promise<Health> => {
 export type Headline = {
   features: number;
   countries: number;
+  places: number;
   writers: number;
   labels: number;
   indieShare: number;
@@ -57,6 +58,7 @@ export const getHeadline = cache(async (): Promise<Headline> => {
     SELECT
       COUNT(*)::int                                                     AS features,
       COUNT(DISTINCT country)::int                                      AS countries,
+      COUNT(DISTINCT location_clean)::int                               AS places,
       COUNT(DISTINCT author)::int                                       AS writers,
       COUNT(DISTINCT record_label) FILTER (WHERE NOT is_independent)::int AS labels,
       (100 * AVG(is_independent::int))::float8                          AS "indieShare",
@@ -114,6 +116,9 @@ export const getRosterShift = cache(async (): Promise<RosterShift> => {
       SELECT author FROM located WHERE year BETWEEN 2018 AND 2023
       INTERSECT
       SELECT author FROM located WHERE year >= 2024
+    ),
+    since_2024 AS (   -- every feature, located or not, as notebook 06 counts it
+      SELECT author FROM bandcamp.vw_article WHERE year >= 2024
     )
     SELECT
       (SELECT COUNT(*) FROM continuing)::int AS writers,
@@ -121,8 +126,8 @@ export const getRosterShift = cache(async (): Promise<RosterShift> => {
                               AND author IN (SELECT author FROM continuing)))::float8 AS before,
       (100 * AVG(us) FILTER (WHERE year >= 2024
                               AND author IN (SELECT author FROM continuing)))::float8 AS after,
-      (100.0 * COUNT(*) FILTER (WHERE year >= 2024 AND author IN (SELECT author FROM continuing))
-             / NULLIF(COUNT(*) FILTER (WHERE year >= 2024), 0))::float8 AS "continuingShare"
+      (SELECT 100.0 * COUNT(*) FILTER (WHERE author IN (SELECT author FROM continuing))
+              / NULLIF(COUNT(*), 0) FROM since_2024)::float8 AS "continuingShare"
     FROM located`;
   return row;
 });
